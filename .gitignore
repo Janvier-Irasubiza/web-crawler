@@ -1,0 +1,11 @@
+rw_crawler.log
+rw_domains.json
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+crawler/logs/
+crawler/data/
