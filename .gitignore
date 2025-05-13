@@ -7,5 +7,7 @@ __pycache__/
 *.pyd
 *.pyw
 *.pyz
-crawler/logs/
-crawler/data/
+logs/
+data/
+dump/
+chromedriver
