@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <title>WebCrawler Analytics Dashboard</title>
+  <title>WebCrawler</title>
   <style>
     .tab-content {
       display: none;
@@ -86,6 +86,12 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
       }
+    .tab-button {
+      @apply px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400;
+    }
+    .tab-button.active {
+      @apply text-indigo-400 border-indigo-500;
+    }
   </style>
     <script>
       tailwind.config = {
@@ -116,7 +122,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen bg-grid">
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 md:px-28 py-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center space-x-3">
@@ -137,10 +143,10 @@
           <h1
             class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
           >
-            WebCrawler Analytics
+            WebCrawler
           </h1>
       </div>
-      <div class="text-sm text-gray-400">
+      <div class="text-gray-400">
         Last updated: <span id="current-time">May 14, 2025</span>
       </div>
     </div>
@@ -150,13 +156,15 @@
       <div class="flex space-x-8">
           <button
             id="tab-analytics"
-            class="px-4 py-2 font-medium text-indigo-400 border-b-2 border-indigo-500 tab-button active"
+            class="px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400 tab-button active"
+            data-tab="analytics-content"
           >
           Website Analytics
         </button>
           <button
             id="tab-domains"
-            class="px-4 py-2 font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400 tab-button"
+            class="px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400 tab-button"
+            data-tab="domains-content"
           >
           Domain Discovery
         </button>
@@ -174,7 +182,7 @@
           <div>
               <label
                 for="domain"
-                class="block text-sm font-medium text-gray-300 mb-1"
+                class="block font-medium text-gray-300 mb-1"
                 >Website Domain</label
               >
             <div class="relative">
@@ -205,7 +213,7 @@
           <div>
               <label
                 for="date-range"
-                class="block text-sm font-medium text-gray-300 mb-1"
+                class="block font-medium text-gray-300 mb-1"
                 >Date Range</label
               >
             <div class="relative">
@@ -237,30 +245,6 @@
             </div>
           </div>
           <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1"
-                >Scan Type</label
-              >
-            <div class="flex items-center space-x-4">
-              <label class="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="scan-type"
-                    value="passive"
-                    class="text-indigo-600 focus:ring-indigo-500 h-4 w-4 border-gray-600 bg-gray-700"
-                    checked
-                  />
-                <span class="ml-2 text-gray-300">Passive</span>
-              </label>
-              <label class="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="scan-type"
-                    value="active"
-                    class="text-indigo-600 focus:ring-indigo-500 h-4 w-4 border-gray-600 bg-gray-700"
-                  />
-                <span class="ml-2 text-gray-300">Active</span>
-              </label>
-            </div>
           </div>
         </div>
         
@@ -297,7 +281,7 @@
           <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
             <div class="flex justify-between">
               <div>
-                  <p class="text-sm font-medium text-gray-400">
+                  <p class="font-medium text-gray-400">
                     Total Visitors
                   </p>
                   <h3 class="text-3xl font-bold text-white" id="total-visitors">
@@ -324,7 +308,7 @@
             <div class="mt-2">
               <div class="flex items-center">
                   <span
-                    class="text-green-500 text-sm font-medium flex items-center"
+                    class="text-green-500 font-medium flex items-center"
                   >
                     <svg
                       class="w-4 h-4 mr-1"
@@ -342,7 +326,7 @@
                   </svg>
                   12.5%
                 </span>
-                  <span class="text-gray-400 text-sm ml-2"
+                  <span class="text-gray-400 ml-2"
                     >from last period</span
                   >
               </div>
@@ -352,7 +336,7 @@
           <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
             <div class="flex justify-between">
               <div>
-                  <p class="text-sm font-medium text-gray-400">
+                  <p class="font-medium text-gray-400">
                     Avg. Time on Site
                   </p>
                   <h3 class="text-3xl font-bold text-white" id="avg-time">
@@ -379,7 +363,7 @@
             <div class="mt-2">
               <div class="flex items-center">
                   <span
-                    class="text-green-500 text-sm font-medium flex items-center"
+                    class="text-green-500 font-medium flex items-center"
                   >
                     <svg
                       class="w-4 h-4 mr-1"
@@ -397,7 +381,7 @@
                   </svg>
                   8.1%
                 </span>
-                  <span class="text-gray-400 text-sm ml-2"
+                  <span class="text-gray-400 ml-2"
                     >from last period</span
                   >
               </div>
@@ -407,7 +391,7 @@
           <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
             <div class="flex justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-400">Top Region</p>
+                <p class="font-medium text-gray-400">Top Region</p>
                   <h3 class="text-3xl font-bold text-white" id="top-region">
                     --
                   </h3>
@@ -440,7 +424,7 @@
           <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
             <div class="flex justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-400">Bounce Rate</p>
+                <p class="font-medium text-gray-400">Bounce Rate</p>
                   <h3 class="text-3xl font-bold text-white" id="bounce-rate">
                     --
                   </h3>
@@ -465,7 +449,7 @@
             <div class="mt-2">
               <div class="flex items-center">
                   <span
-                    class="text-red-500 text-sm font-medium flex items-center"
+                    class="text-red-500 font-medium flex items-center"
                   >
                     <svg
                       class="w-4 h-4 mr-1"
@@ -483,7 +467,7 @@
                   </svg>
                   3.2%
                 </span>
-                  <span class="text-gray-400 text-sm ml-2"
+                  <span class="text-gray-400 ml-2"
                     >from last period</span
                   >
               </div>
@@ -632,7 +616,7 @@
             <div
               class="flex items-center justify-between p-4 border-t border-gray-700"
             >
-            <div class="text-sm text-gray-400">
+            <div class="text-gray-400">
                 Showing <span class="font-medium text-white">1</span> to
                 <span class="font-medium text-white">10</span> of
                 <span class="font-medium text-white">--</span> results
@@ -669,12 +653,40 @@
         <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-400">Found Domains</p>
+              <p class="font-medium text-gray-400">Discovered Domains</p>
               <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400" id="found-domains">0</h3>
             </div>
             <div class="p-3 rounded-full bg-indigo-900/30 text-indigo-400">
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-medium text-gray-400">Search Engines</p>
+              <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-red-400" id="search-engines">0</h3>
+            </div>
+            <div class="p-3 rounded-full bg-pink-900/30 text-pink-400">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-medium text-gray-400">Scan Duration</p>
+              <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400" id="scan-duration">0s</h3>
+            </div>
+            <div class="p-3 rounded-full bg-red-900/30 text-red-400">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
@@ -700,7 +712,7 @@
               <tr>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Domain</th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Last Scan</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Open</th>
               </tr>
             </thead>
             <tbody id="domain-list" class="bg-gray-800 divide-y divide-gray-700">
@@ -709,12 +721,12 @@
           </table>
         </div>
         <div class="flex items-center justify-between p-4 border-t border-gray-700">
-          <div class="text-sm text-gray-400">
+          <div class="text-gray-400" id="pagination-info">
             Showing <span class="font-medium text-white">1</span> to
             <span class="font-medium text-white">10</span> of
             <span class="font-medium text-white" id="total-domains">0</span> domains
           </div>
-          <div class="flex space-x-2">
+          <div class="flex space-x-2" id="pagination-buttons">
             <button class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700">Previous</button>
             <button class="px-3 py-1 rounded bg-indigo-600 text-white">1</button>
             <button class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700">Next</button>
@@ -728,24 +740,35 @@
       // Tab switching functionality
       document.querySelectorAll(".tab-button").forEach((button) => {
         button.addEventListener("click", () => {
-          // Remove active class from all buttons and content
-          document
-            .querySelectorAll(".tab-button")
-            .forEach((btn) => btn.classList.remove("active"));
-          document
-            .querySelectorAll(".tab-content")
-            .forEach((content) => content.classList.remove("active"));
-
-          // Add active class to clicked button and corresponding content
-          button.classList.add("active");
-          const contentId = button.id.replace("tab-", "") + "-content";
-          document.getElementById(contentId).classList.add("active");
+          // Remove active state from all tabs and content
+          document.querySelectorAll(".tab-button").forEach(tab => {
+            tab.classList.remove("active", "text-indigo-400", "border-indigo-500");
+            tab.classList.add("text-gray-400", "border-transparent");
+          });
+          document.querySelectorAll(".tab-content").forEach(content => {
+            content.classList.remove("active");
+          });
+          
+          // Add active state to clicked tab and its content
+          button.classList.remove("text-gray-400", "border-transparent");
+          button.classList.add("active", "text-indigo-400", "border-indigo-500");
+          document.getElementById(button.dataset.tab).classList.add("active");
         });
       });
 
+      // Set initial active state for Website Analytics tab
+      document.addEventListener('DOMContentLoaded', () => {
+        const analyticsTab = document.getElementById('tab-analytics');
+        if (analyticsTab) {
+          analyticsTab.classList.remove("text-gray-400", "border-transparent");
+          analyticsTab.classList.add("active", "text-indigo-400", "border-indigo-500");
+          document.getElementById('analytics-content').classList.add("active");
+        }
+      });
+
       // Update current time
-      function updateCurrentTime() {
-        const now = new Date();
+      function updateCurrentTime(timestamp) {
+        const now = timestamp ? new Date(timestamp) : new Date();
         document.getElementById("current-time").textContent =
           now.toLocaleDateString("en-US", {
             year: "numeric",
@@ -755,8 +778,6 @@
             minute: "2-digit",
           });
       }
-      updateCurrentTime();
-      setInterval(updateCurrentTime, 60000);
 
       // Initialize charts when content is loaded
       document.querySelectorAll(".blur-load").forEach((element) => {
@@ -1054,15 +1075,244 @@
         visitorData.forEach((data) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.ip}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.location}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.region}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.timeSpent}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.pagesViewed}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${data.lastVisit}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.ip}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.location}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.region}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.timeSpent}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.pagesViewed}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.lastVisit}</td>
           `;
           visitorTableBody.appendChild(row);
         });
+      }
+
+      // Pagination state (global for domains table)
+      let currentPage = 1;
+      let totalPages = 1;
+      let sortedDomains = [];
+      const itemsPerPage = 10;
+
+      // Function to render domains for current page
+      function renderDomains() {
+        const domainTableBody = document.getElementById('domain-list');
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageDomains = sortedDomains.slice(start, end);
+
+        // Clear existing rows
+        domainTableBody.innerHTML = '';
+
+        // Add new rows
+        pageDomains.forEach(domain => {
+          try {
+            const domainName = typeof domain === 'string' ? domain : domain.domain || domain.name || JSON.stringify(domain);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">${domainName}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">${new Date().toLocaleString()}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-indigo-400 hover:text-indigo-300 cursor-pointer">
+                <a href="${domain.url || '#'}" target="_blank" class="flex items-center gap-1">
+                  Open
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </a>
+              </td>
+            `;
+            domainTableBody.appendChild(row);
+          } catch (error) {
+            console.error('Error creating row for domain:', domain, error);
+          }
+        });
+
+        // Update pagination info
+        const paginationInfo = document.getElementById('pagination-info');
+        if (paginationInfo) {
+          paginationInfo.innerHTML = `
+            Showing <span class="font-medium text-white">${start + 1}</span> to
+            <span class="font-medium text-white">${Math.min(end, sortedDomains.length)}</span> of
+            <span class="font-medium text-white">${sortedDomains.length}</span> domains
+          `;
+        }
+
+        // Update pagination buttons
+        const paginationContainer = document.getElementById('pagination-buttons');
+        if (paginationContainer) {
+          paginationContainer.innerHTML = '';
+
+          // Previous button
+          const prevButton = document.createElement('button');
+          prevButton.className = `px-3 py-1 rounded ${currentPage === 1 ? 'text-gray-500 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
+          prevButton.textContent = 'Previous';
+          prevButton.disabled = currentPage === 1;
+          prevButton.onclick = () => {
+            if (currentPage > 1) {
+              currentPage--;
+              renderDomains();
+            }
+          };
+          paginationContainer.appendChild(prevButton);
+
+          // Calculate page range to show
+          const maxVisiblePages = 5;
+          let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+          let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+          
+          // Adjust start page if we're near the end
+          if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+          }
+
+          // First page button if not in range
+          if (startPage > 1) {
+            const firstPageButton = document.createElement('button');
+            firstPageButton.className = 'px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700';
+            firstPageButton.textContent = '1';
+            firstPageButton.onclick = () => {
+              currentPage = 1;
+              renderDomains();
+            };
+            paginationContainer.appendChild(firstPageButton);
+
+            // Ellipsis if needed
+            if (startPage > 2) {
+              const ellipsis = document.createElement('span');
+              ellipsis.className = 'px-2 text-gray-400';
+              ellipsis.textContent = '...';
+              paginationContainer.appendChild(ellipsis);
+            }
+          }
+
+          // Page numbers
+          for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.className = `px-3 py-1 rounded ${currentPage === i ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
+            pageButton.textContent = i;
+            pageButton.onclick = () => {
+              currentPage = i;
+              renderDomains();
+            };
+            paginationContainer.appendChild(pageButton);
+          }
+
+          // Last page button if not in range
+          if (endPage < totalPages) {
+            // Ellipsis if needed
+            if (endPage < totalPages - 1) {
+              const ellipsis = document.createElement('span');
+              ellipsis.className = 'px-2 text-gray-400';
+              ellipsis.textContent = '...';
+              paginationContainer.appendChild(ellipsis);
+            }
+
+            const lastPageButton = document.createElement('button');
+            lastPageButton.className = 'px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700';
+            lastPageButton.textContent = totalPages;
+            lastPageButton.onclick = () => {
+              currentPage = totalPages;
+              renderDomains();
+            };
+            paginationContainer.appendChild(lastPageButton);
+          }
+
+          // Next button
+          const nextButton = document.createElement('button');
+          nextButton.className = `px-3 py-1 rounded ${currentPage === totalPages ? 'text-gray-500 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
+          nextButton.textContent = 'Next';
+          nextButton.disabled = currentPage === totalPages;
+          nextButton.onclick = () => {
+            if (currentPage < totalPages) {
+              currentPage++;
+              renderDomains();
+            }
+          };
+          paginationContainer.appendChild(nextButton);
+        }
+      }
+
+      // Function to format duration in a human-readable way
+      function formatDuration(seconds) {
+        if (!seconds) return '0s';
+        
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+        
+        const parts = [];
+        if (hours > 0) parts.push(`${hours}h`);
+        if (minutes > 0) parts.push(`${minutes}m`);
+        if (remainingSeconds > 0 || parts.length === 0) parts.push(`${remainingSeconds}s`);
+        
+        return parts.join(' ');
+      }
+
+      // Function to parse Python timedelta string (e.g., '0:00:03.188102') to seconds
+      function parsePythonTimedelta(timedeltaStr) {
+        if (!timedeltaStr || typeof timedeltaStr !== 'string') return null;
+        // Format: H:MM:SS.microseconds
+        const match = timedeltaStr.match(/^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$/);
+        if (!match) return null;
+        const hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2], 10);
+        const seconds = parseInt(match[3], 10);
+        // Ignore microseconds for display
+        return hours * 3600 + minutes * 60 + seconds;
+      }
+
+      // Function to update scan duration
+      function updateScanDuration(duration) {
+        const scanDurationSpan = document.getElementById('scan-duration');
+        if (scanDurationSpan) {
+          if (typeof duration === 'string') {
+            // Try to parse as Python timedelta string
+            const seconds = parsePythonTimedelta(duration);
+            if (seconds !== null) {
+              scanDurationSpan.textContent = formatDuration(seconds);
+            } else {
+              scanDurationSpan.textContent = duration;
+            }
+          } else if (typeof duration === 'number') {
+            scanDurationSpan.textContent = formatDuration(duration);
+          } else {
+            scanDurationSpan.textContent = '0s';
+          }
+        }
+      }
+
+      // Function to update domain list
+      function updateDomainList(data) {
+        const totalDomainsSpan = document.getElementById('total-domains');
+        const foundDomainsSpan = document.getElementById('found-domains');
+        const searchEnginesSpan = document.getElementById('search-engines');
+        
+        // Get domains array from the response
+        const domains = data.domains || [];
+        
+        // Update total domains count
+        if (totalDomainsSpan) {
+          totalDomainsSpan.textContent = domains.length;
+        }
+        if (foundDomainsSpan) {
+          foundDomainsSpan.textContent = domains.length;
+        }
+
+        // Update metadata if available
+        const metadata = data.metadata || {};
+        if (searchEnginesSpan) {
+          searchEnginesSpan.textContent = metadata.search_engines?.length || 0;
+        }
+
+        // Update scan duration with proper formatting
+        updateScanDuration(metadata.crawl_duration);
+
+        // Update last updated time
+        updateCurrentTime(data.last_updated);
+
+        // Sort domains in descending order and update global state
+        sortedDomains = [...domains].reverse();
+        totalPages = Math.max(1, Math.ceil(sortedDomains.length / itemsPerPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+        renderDomains();
       }
 
       // Function to fetch domains from API
@@ -1070,7 +1320,6 @@
         try {
           const response = await fetch('/api/domains');
           const data = await response.json();
-          console.log('Fetched domains:', data); // Debug log
           
           if (data.error) {
             console.error('API returned error:', data.error);
@@ -1084,67 +1333,14 @@
         }
       }
 
-      // Function to update domain list
-      function updateDomainList(domains) {
-        console.log('Updating domain list with:', domains); // Debug log
-        
-        const domainTableBody = document.getElementById('domain-list');
-        const totalDomainsSpan = document.getElementById('total-domains');
-        const foundDomainsSpan = document.getElementById('found-domains');
-        
-        if (!domainTableBody) {
-          console.error('Domain list table body not found');
-          return;
-        }
-
-        // Clear existing rows
-        domainTableBody.innerHTML = '';
-
-        // Ensure domains is an array
-        if (!Array.isArray(domains)) {
-          console.error('Domains is not an array:', domains);
-          domains = [];
-        }
-
-        // Update total domains count
-        if (totalDomainsSpan) {
-          totalDomainsSpan.textContent = domains.length;
-        }
-        if (foundDomainsSpan) {
-          foundDomainsSpan.textContent = domains.length;
-        }
-
-        // Add new rows
-        domains.forEach(domain => {
-          try {
-            // Handle both string domains and object domains
-            const domainName = typeof domain === 'string' ? domain : domain.domain || domain.name || JSON.stringify(domain);
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${domainName}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${new Date().toLocaleString()}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-400 hover:text-indigo-300 cursor-pointer">
-                View Details
-              </td>
-            `;
-            domainTableBody.appendChild(row);
-          } catch (error) {
-            console.error('Error creating row for domain:', domain, error);
-          }
-        });
-      }
-
       // Function to start polling
       let lastUpdateTime = null;
       function startPolling() {
-        console.log('Starting domain polling...'); // Debug log
         
         // Initial fetch
         fetchDomains().then(data => {
-          console.log('Initial domains data:', data); // Debug log
           if (data.domains) {
-            updateDomainList(data.domains);
+            updateDomainList(data);
             lastUpdateTime = data.last_updated;
           }
         });
@@ -1153,8 +1349,7 @@
         setInterval(async () => {
           const data = await fetchDomains();
           if (data.last_updated !== lastUpdateTime) {
-            console.log('New domains data:', data); // Debug log
-            updateDomainList(data.domains);
+            updateDomainList(data);
             lastUpdateTime = data.last_updated;
           }
         }, 5000);
@@ -1162,7 +1357,6 @@
 
       // Start polling when the page loads
       document.addEventListener('DOMContentLoaded', () => {
-        console.log('Starting domain polling...'); // Debug log
         startPolling();
       });
     </script>
