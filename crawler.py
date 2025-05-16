@@ -28,8 +28,8 @@ def start_crawler():
     if crawler_process is None:
         try:
             # Start the crawler as a subprocess
-            crawler_process = subprocess.Popen([sys.executable, "crawler/rw_crawler.py"])
-            logger.info("Crawler process started")
+            crawler_process = subprocess.Popen([sys.executable, "domain-crawler/rw_crawler.py"])
+            logger.info("Domain crawler process started")
             return True
         except Exception as e:
             logger.error(f"Error starting crawler: {e}")
@@ -41,7 +41,7 @@ def start_analytics():
     if analytics_process is None:
         try:
             # Start the analytics as a subprocess
-            analytics_process = subprocess.Popen([sys.executable, "analytics/analytics.py"])
+            analytics_process = subprocess.Popen([sys.executable, "analytics/server.py"])
             logger.info("Analytics process started")
             return True
         except Exception as e:
