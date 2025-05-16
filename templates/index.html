@@ -1,73 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <title>WebCrawler</title>
-  <style>
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .blur-load {
-      filter: blur(5px);
-      transition: filter 1s ease-in-out;
-    }
-    .blur-load.loaded {
-      filter: blur(0);
-    }
-    .slide-up {
-      transition: transform 0.5s ease-in-out;
-    }
-    .slid-up {
-      transform: translateY(-20px);
-    }
-    .gradient-border {
-      position: relative;
-      border-radius: 0.5rem;
-    }
-    .gradient-border::after {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <title>WebCrawler</title>
+    <style>
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .blur-load {
+        filter: blur(5px);
+        transition: filter 1s ease-in-out;
+      }
+      .blur-load.loaded {
+        filter: blur(0);
+      }
+      .slide-up {
+        transition: transform 0.5s ease-in-out;
+      }
+      .slid-up {
+        transform: translateY(-20px);
+      }
+      .gradient-border {
+        position: relative;
+        border-radius: 0.5rem;
+      }
+      .gradient-border::after {
         content: "";
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, #6366f1, #8b5cf6, #ec4899);
-      border-radius: 0.6rem;
-      z-index: -1;
-    }
-    .bg-grid {
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6, #ec4899);
+        border-radius: 0.6rem;
+        z-index: -1;
+      }
+      .bg-grid {
         background-image: radial-gradient(
           rgba(255, 255, 255, 0.1) 1px,
           transparent 1px
         );
-      background-size: 20px 20px;
-    }
-    .glow {
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
-    }
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #1f2937;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #4f46e5;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #4338ca;
-    }
+        background-size: 20px 20px;
+      }
+      .glow {
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1f2937;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #4f46e5;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #4338ca;
+      }
 
       /* Additional utility classes */
       .text-gradient {
@@ -86,13 +86,13 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
       }
-    .tab-button {
-      @apply px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400;
-    }
-    .tab-button.active {
-      @apply text-indigo-400 border-indigo-500;
-    }
-  </style>
+      .tab-button {
+        @apply px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400;
+      }
+      .tab-button.active {
+        @apply text-indigo-400 border-indigo-500;
+      }
+    </style>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -119,13 +119,12 @@
         },
       };
     </script>
-</head>
-<body class="bg-gray-900 text-gray-100 min-h-screen bg-grid">
-
+  </head>
+  <body class="bg-gray-900 text-gray-100 min-h-screen bg-grid">
     <div class="container mx-auto px-4 md:px-28 py-8">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div class="flex items-center space-x-3">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center space-x-3">
           <svg
             class="w-10 h-10 text-indigo-500"
             fill="none"
@@ -139,53 +138,51 @@
               stroke-width="2"
               d="M19.828 4.172a4 4 0 00-5.656 0l-4.172 4.172 5.656 5.656 4.172-4.172a4 4 0 000-5.656zM9.172 14.828L4 20l5.172-1.172L15 13l-4 4-1.828 1.828z"
             ></path>
-        </svg>
+          </svg>
           <h1
             class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
           >
             WebCrawler
           </h1>
+        </div>
+        <div class="text-gray-400">
+          Last updated: <span id="current-time">May 14, 2025</span>
+        </div>
       </div>
-      <div class="text-gray-400">
-        Last updated: <span id="current-time">May 14, 2025</span>
-      </div>
-    </div>
 
-    <!-- Tabs -->
-    <div class="mb-6 border-b border-gray-700">
-      <div class="flex space-x-8">
+      <!-- Tabs -->
+      <div class="mb-6 border-b border-gray-700">
+        <div class="flex space-x-8">
           <button
             id="tab-analytics"
             class="px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400 tab-button active"
             data-tab="analytics-content"
           >
-          Website Analytics
-        </button>
+            Website Analytics
+          </button>
           <button
             id="tab-domains"
             class="px-4 py-2 text-lg font-medium text-gray-400 hover:text-indigo-400 border-b-2 border-transparent hover:border-indigo-400 tab-button"
             data-tab="domains-content"
           >
-          Domain Discovery
-        </button>
+            Domain Discovery
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- Analytics Tab Content -->
-    <div id="analytics-content" class="tab-content active">
-      <!-- Input Form -->
+      <!-- Analytics Tab Content -->
+      <div id="analytics-content" class="tab-content active">
+        <!-- Input Form -->
         <div
           id="input-form"
           class="slide-up bg-gray-800 p-6 rounded-lg shadow-lg mb-8 gradient-border"
         >
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div>
-              <label
-                for="domain"
-                class="block font-medium text-gray-300 mb-1"
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <label for="domain" class="block font-medium text-gray-300 mb-1"
                 >Website Domain</label
               >
-            <div class="relative">
+              <div class="relative">
                 <div
                   class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                 >
@@ -200,23 +197,23 @@
                       d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z"
                       clip-rule="evenodd"
                     />
-                </svg>
-              </div>
+                  </svg>
+                </div>
                 <input
                   type="text"
                   id="domain"
                   placeholder="e.g. igihe.com"
                   class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
                 />
+              </div>
             </div>
-          </div>
-          <div>
+            <div>
               <label
                 for="date-range"
                 class="block font-medium text-gray-300 mb-1"
                 >Date Range</label
               >
-            <div class="relative">
+              <div class="relative">
                 <div
                   class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                 >
@@ -231,29 +228,28 @@
                       d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                       clip-rule="evenodd"
                     />
-                </svg>
-              </div>
+                  </svg>
+                </div>
                 <select
                   id="date-range"
                   class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                <option value="7days">Last 7 days</option>
-                <option value="30days">Last 30 days</option>
-                <option value="90days">Last 90 days</option>
-                <option value="custom">Custom range</option>
-              </select>
+                  <option value="7days">Last 7 days</option>
+                  <option value="30days">Last 30 days</option>
+                  <option value="90days">Last 90 days</option>
+                  <option value="custom">Custom range</option>
+                </select>
+              </div>
             </div>
+            <div></div>
           </div>
-          <div>
-          </div>
-        </div>
-        
-        <div class="mt-6 flex justify-center">
+
+          <div class="mt-6 flex justify-center">
             <button
               id="scan-button"
               class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-900 transform transition hover:-translate-y-0.5"
             >
-            <div class="flex items-center">
+              <div class="flex items-center">
                 <svg
                   class="w-5 h-5 mr-2"
                   fill="none"
@@ -267,28 +263,26 @@
                     stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   ></path>
-              </svg>
-              Start Website Analysis
-            </div>
-          </button>
+                </svg>
+                Start Website Analysis
+              </div>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Results Container (Initially Hidden) -->
-      <div id="results-container" class="hidden space-y-8">
-        <!-- Overview Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
-            <div class="flex justify-between">
-              <div>
-                  <p class="font-medium text-gray-400">
-                    Total Visitors
-                  </p>
+        <!-- Results Container (Initially Hidden) -->
+        <div id="results-container" class="hidden space-y-8">
+          <!-- Overview Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-medium text-gray-400">Total Visitors</p>
                   <h3 class="text-3xl font-bold text-white" id="total-visitors">
                     --
                   </h3>
-              </div>
-              <div class="p-3 rounded-full bg-indigo-900/30 text-indigo-500">
+                </div>
+                <div class="p-3 rounded-full bg-indigo-900/30 text-indigo-500">
                   <svg
                     class="w-8 h-8"
                     fill="none"
@@ -302,14 +296,12 @@
                       stroke-width="2"
                       d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                     ></path>
-                </svg>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div class="mt-2">
-              <div class="flex items-center">
-                  <span
-                    class="text-green-500 font-medium flex items-center"
-                  >
+              <div class="mt-2">
+                <div class="flex items-center">
+                  <span class="text-green-500 font-medium flex items-center">
                     <svg
                       class="w-4 h-4 mr-1"
                       fill="none"
@@ -323,27 +315,23 @@
                         stroke-width="2"
                         d="M5 10l7-7m0 0l7 7m-7-7v18"
                       ></path>
-                  </svg>
-                  12.5%
-                </span>
-                  <span class="text-gray-400 ml-2"
-                    >from last period</span
-                  >
+                    </svg>
+                    12.5%
+                  </span>
+                  <span class="text-gray-400 ml-2">from last period</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
-            <div class="flex justify-between">
-              <div>
-                  <p class="font-medium text-gray-400">
-                    Avg. Time on Site
-                  </p>
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-medium text-gray-400">Avg. Time on Site</p>
                   <h3 class="text-3xl font-bold text-white" id="avg-time">
                     --
                   </h3>
-              </div>
-              <div class="p-3 rounded-full bg-purple-900/30 text-purple-500">
+                </div>
+                <div class="p-3 rounded-full bg-purple-900/30 text-purple-500">
                   <svg
                     class="w-8 h-8"
                     fill="none"
@@ -357,14 +345,12 @@
                       stroke-width="2"
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
-                </svg>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div class="mt-2">
-              <div class="flex items-center">
-                  <span
-                    class="text-green-500 font-medium flex items-center"
-                  >
+              <div class="mt-2">
+                <div class="flex items-center">
+                  <span class="text-green-500 font-medium flex items-center">
                     <svg
                       class="w-4 h-4 mr-1"
                       fill="none"
@@ -378,25 +364,23 @@
                         stroke-width="2"
                         d="M5 10l7-7m0 0l7 7m-7-7v18"
                       ></path>
-                  </svg>
-                  8.1%
-                </span>
-                  <span class="text-gray-400 ml-2"
-                    >from last period</span
-                  >
+                    </svg>
+                    8.1%
+                  </span>
+                  <span class="text-gray-400 ml-2">from last period</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
-            <div class="flex justify-between">
-              <div>
-                <p class="font-medium text-gray-400">Top Region</p>
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-medium text-gray-400">Top Region</p>
                   <h3 class="text-3xl font-bold text-white" id="top-region">
                     --
                   </h3>
-              </div>
-              <div class="p-3 rounded-full bg-pink-900/30 text-pink-500">
+                </div>
+                <div class="p-3 rounded-full bg-pink-900/30 text-pink-500">
                   <svg
                     class="w-8 h-8"
                     fill="none"
@@ -410,26 +394,26 @@
                       stroke-width="2"
                       d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
-                </svg>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div class="mt-2">
-              <div class="text-gray-400 text-sm">
+              <div class="mt-2">
+                <div class="text-gray-400 text-sm">
                   <span class="font-medium text-white">67%</span> of total
                   traffic
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
-            <div class="flex justify-between">
-              <div>
-                <p class="font-medium text-gray-400">Bounce Rate</p>
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-medium text-gray-400">Bounce Rate</p>
                   <h3 class="text-3xl font-bold text-white" id="bounce-rate">
                     --
                   </h3>
-              </div>
-              <div class="p-3 rounded-full bg-blue-900/30 text-blue-500">
+                </div>
+                <div class="p-3 rounded-full bg-blue-900/30 text-blue-500">
                   <svg
                     class="w-8 h-8"
                     fill="none"
@@ -443,14 +427,12 @@
                       stroke-width="2"
                       d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
                     ></path>
-                </svg>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div class="mt-2">
-              <div class="flex items-center">
-                  <span
-                    class="text-red-500 font-medium flex items-center"
-                  >
+              <div class="mt-2">
+                <div class="flex items-center">
+                  <span class="text-red-500 font-medium flex items-center">
                     <svg
                       class="w-4 h-4 mr-1"
                       fill="none"
@@ -464,61 +446,59 @@
                         stroke-width="2"
                         d="M19 14l-7 7m0 0l-7-7m7 7V3"
                       ></path>
-                  </svg>
-                  3.2%
-                </span>
-                  <span class="text-gray-400 ml-2"
-                    >from last period</span
-                  >
+                    </svg>
+                    3.2%
+                  </span>
+                  <span class="text-gray-400 ml-2">from last period</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Visitors by Region -->
-          <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
+          <!-- Charts Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Visitors by Region -->
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
               <h3 class="text-lg font-medium text-white mb-4">
                 Visitors by Region
               </h3>
-            <div class="h-80">
-              <canvas id="region-chart"></canvas>
+              <div class="h-80">
+                <canvas id="region-chart"></canvas>
+              </div>
             </div>
-          </div>
 
             <!-- Geographic Distribution -->
-          <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
               <h3 class="text-lg font-medium text-white mb-4">
                 Geographic Distribution
               </h3>
-            <div class="h-80">
+              <div class="h-80">
                 <canvas id="geo-chart"></canvas>
+              </div>
             </div>
-          </div>
 
             <!-- Time Spent Analysis -->
-          <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
               <h3 class="text-lg font-medium text-white mb-4">
                 Time Spent Analysis
               </h3>
-            <div class="h-80">
+              <div class="h-80">
                 <canvas id="time-chart"></canvas>
+              </div>
             </div>
-          </div>
 
             <!-- Traffic Distribution -->
-          <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 blur-load">
               <h3 class="text-lg font-medium text-white mb-4">
                 Traffic Distribution (24h)
               </h3>
-            <div class="h-80">
+              <div class="h-80">
                 <canvas id="traffic-chart"></canvas>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Data Table -->
+          <!-- Data Table -->
           <div
             class="bg-gray-800 rounded-lg shadow-lg overflow-hidden blur-load"
           >
@@ -528,8 +508,8 @@
               <h3 class="text-lg font-medium text-white">
                 Detailed Visitor Data
               </h3>
-            <div class="flex space-x-2">
-              <button class="p-2 text-gray-400 hover:text-white">
+              <div class="flex space-x-2">
+                <button class="p-2 text-gray-400 hover:text-white">
                   <svg
                     class="w-5 h-5"
                     fill="none"
@@ -543,9 +523,9 @@
                       stroke-width="2"
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                     ></path>
-                </svg>
-              </button>
-              <button class="p-2 text-gray-400 hover:text-white">
+                  </svg>
+                </button>
+                <button class="p-2 text-gray-400 hover:text-white">
                   <svg
                     class="w-5 h-5"
                     fill="none"
@@ -559,38 +539,38 @@
                       stroke-width="2"
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                     ></path>
-                </svg>
-              </button>
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-              <thead class="bg-gray-700">
-                <tr>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-700">
+                  <tr>
                     <th
                       scope="col"
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                     >
                       IP Address
-                  </th>
+                    </th>
                     <th
                       scope="col"
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                     >
                       Location
-                  </th>
+                    </th>
                     <th
                       scope="col"
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                     >
                       Region
-                  </th>
+                    </th>
                     <th
                       scope="col"
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                     >
                       Time Spent
-                  </th>
+                    </th>
                     <th
                       scope="col"
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
@@ -602,134 +582,240 @@
                       class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                     >
                       Last Visit
-                  </th>
-                </tr>
-              </thead>
+                    </th>
+                  </tr>
+                </thead>
                 <tbody
                   id="visitor-data"
                   class="bg-gray-800 divide-y divide-gray-700"
                 >
-                <!-- Data will be inserted here -->
-              </tbody>
-            </table>
-          </div>
+                  <!-- Data will be inserted here -->
+                </tbody>
+              </table>
+            </div>
             <div
               class="flex items-center justify-between p-4 border-t border-gray-700"
             >
-            <div class="text-gray-400">
+              <div class="text-gray-400">
                 Showing <span class="font-medium text-white">1</span> to
                 <span class="font-medium text-white">10</span> of
                 <span class="font-medium text-white">--</span> results
-            </div>
-            <div class="flex space-x-2">
+              </div>
+              <div class="flex space-x-2">
                 <button
                   class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
                 >
+                  Previous
+                </button>
+                <button class="px-3 py-1 rounded bg-indigo-600 text-white">
+                  1
+                </button>
+                <button
+                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+                >
+                  2
+                </button>
+                <button
+                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domains Tab Content -->
+      <div id="domains-content" class="tab-content">
+        <!-- Domain Discovery Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div
+            class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-400">Discovered Domains</p>
+                <h3
+                  class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400"
+                  id="found-domains"
+                >
+                  0
+                </h3>
+              </div>
+              <div class="p-3 rounded-full bg-indigo-900/30 text-indigo-400">
+                <svg
+                  class="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-400">Scan Duration</p>
+                <h3
+                  class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400"
+                  id="scan-duration"
+                >
+                  0s
+                </h3>
+              </div>
+              <div class="p-3 rounded-full bg-red-900/30 text-red-400">
+                <svg
+                  class="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-400">Search Engines</p>
+                <h3
+                  class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-red-400"
+                  id="search-engines"
+                >
+                  0
+                </h3>
+              </div>
+              <div class="p-3 rounded-full bg-pink-900/30 text-pink-400">
+                <svg
+                  class="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain List -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div
+            class="flex justify-between items-center p-6 border-b border-gray-700"
+          >
+            <h3 class="text-lg font-medium text-white">
+              Discovered .rw Domains
+            </h3>
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="domain-search"
+                placeholder="Search domains..."
+                class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+              <thead class="bg-gray-700">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Domain
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Last Scan
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Open
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="domain-list"
+                class="bg-gray-800 divide-y divide-gray-700"
+              >
+                <!-- Domain data will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="flex items-center justify-between p-4 border-t border-gray-700"
+          >
+            <div class="text-gray-400" id="pagination-info">
+              Showing <span class="font-medium text-white">1</span> to
+              <span class="font-medium text-white">10</span> of
+              <span class="font-medium text-white" id="total-domains">0</span>
+              domains
+            </div>
+            <div class="flex space-x-2" id="pagination-buttons">
+              <button
+                class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+              >
                 Previous
               </button>
               <button class="px-3 py-1 rounded bg-indigo-600 text-white">
                 1
               </button>
-                <button
-                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
-                >
-                2
-              </button>
-                <button
-                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
-                >
+              <button
+                class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+              >
                 Next
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Domains Tab Content -->
-    <div id="domains-content" class="tab-content">
-      <!-- Domain Discovery Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-medium text-gray-400">Discovered Domains</p>
-              <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400" id="found-domains">0</h3>
-            </div>
-            <div class="p-3 rounded-full bg-indigo-900/30 text-indigo-400">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-medium text-gray-400">Search Engines</p>
-              <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-red-400" id="search-engines">0</h3>
-            </div>
-            <div class="p-3 rounded-full bg-pink-900/30 text-pink-400">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border glow">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-medium text-gray-400">Scan Duration</p>
-              <h3 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400" id="scan-duration">0s</h3>
-            </div>
-            <div class="p-3 rounded-full bg-red-900/30 text-red-400">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Domain List -->
-      <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-        <div class="flex justify-between items-center p-6 border-b border-gray-700">
-          <h3 class="text-lg font-medium text-white">Discovered .rw Domains</h3>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-              </svg>
-            </div>
-            <input type="text" id="domain-search" placeholder="Search domains..." class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500">
-          </div>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-700">
-            <thead class="bg-gray-700">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Domain</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Last Scan</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Open</th>
-              </tr>
-            </thead>
-            <tbody id="domain-list" class="bg-gray-800 divide-y divide-gray-700">
-              <!-- Domain data will be inserted here -->
-            </tbody>
-          </table>
-        </div>
-        <div class="flex items-center justify-between p-4 border-t border-gray-700">
-          <div class="text-gray-400" id="pagination-info">
-            Showing <span class="font-medium text-white">1</span> to
-            <span class="font-medium text-white">10</span> of
-            <span class="font-medium text-white" id="total-domains">0</span> domains
-          </div>
-          <div class="flex space-x-2" id="pagination-buttons">
-            <button class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700">Previous</button>
-            <button class="px-3 py-1 rounded bg-indigo-600 text-white">1</button>
-            <button class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700">Next</button>
           </div>
         </div>
       </div>
@@ -741,28 +827,40 @@
       document.querySelectorAll(".tab-button").forEach((button) => {
         button.addEventListener("click", () => {
           // Remove active state from all tabs and content
-          document.querySelectorAll(".tab-button").forEach(tab => {
-            tab.classList.remove("active", "text-indigo-400", "border-indigo-500");
+          document.querySelectorAll(".tab-button").forEach((tab) => {
+            tab.classList.remove(
+              "active",
+              "text-indigo-400",
+              "border-indigo-500"
+            );
             tab.classList.add("text-gray-400", "border-transparent");
           });
-          document.querySelectorAll(".tab-content").forEach(content => {
+          document.querySelectorAll(".tab-content").forEach((content) => {
             content.classList.remove("active");
           });
-          
+
           // Add active state to clicked tab and its content
           button.classList.remove("text-gray-400", "border-transparent");
-          button.classList.add("active", "text-indigo-400", "border-indigo-500");
+          button.classList.add(
+            "active",
+            "text-indigo-400",
+            "border-indigo-500"
+          );
           document.getElementById(button.dataset.tab).classList.add("active");
         });
       });
 
       // Set initial active state for Website Analytics tab
-      document.addEventListener('DOMContentLoaded', () => {
-        const analyticsTab = document.getElementById('tab-analytics');
+      document.addEventListener("DOMContentLoaded", () => {
+        const analyticsTab = document.getElementById("tab-analytics");
         if (analyticsTab) {
           analyticsTab.classList.remove("text-gray-400", "border-transparent");
-          analyticsTab.classList.add("active", "text-indigo-400", "border-indigo-500");
-          document.getElementById('analytics-content').classList.add("active");
+          analyticsTab.classList.add(
+            "active",
+            "text-indigo-400",
+            "border-indigo-500"
+          );
+          document.getElementById("analytics-content").classList.add("active");
         }
       });
 
@@ -1094,24 +1192,29 @@
 
       // Function to render domains for current page
       function renderDomains() {
-        const domainTableBody = document.getElementById('domain-list');
+        const domainTableBody = document.getElementById("domain-list");
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const pageDomains = sortedDomains.slice(start, end);
 
         // Clear existing rows
-        domainTableBody.innerHTML = '';
+        domainTableBody.innerHTML = "";
 
         // Add new rows
-        pageDomains.forEach(domain => {
+        pageDomains.forEach((domain) => {
           try {
-            const domainName = typeof domain === 'string' ? domain : domain.domain || domain.name || JSON.stringify(domain);
-            const row = document.createElement('tr');
+            const domainName =
+              typeof domain === "string"
+                ? domain
+                : domain.domain || domain.name || JSON.stringify(domain);
+            const row = document.createElement("tr");
             row.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap text-gray-300">${domainName}</td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-300">${new Date().toLocaleString()}</td>
               <td class="px-6 py-4 whitespace-nowrap text-indigo-400 hover:text-indigo-300 cursor-pointer">
-                <a href="${domain.url || '#'}" target="_blank" class="flex items-center gap-1">
+                <a href="${
+                  domain.url || "#"
+                }" target="_blank" class="flex items-center gap-1">
                   Open
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
@@ -1121,29 +1224,39 @@
             `;
             domainTableBody.appendChild(row);
           } catch (error) {
-            console.error('Error creating row for domain:', domain, error);
+            console.error("Error creating row for domain:", domain, error);
           }
         });
 
         // Update pagination info
-        const paginationInfo = document.getElementById('pagination-info');
+        const paginationInfo = document.getElementById("pagination-info");
         if (paginationInfo) {
           paginationInfo.innerHTML = `
             Showing <span class="font-medium text-white">${start + 1}</span> to
-            <span class="font-medium text-white">${Math.min(end, sortedDomains.length)}</span> of
-            <span class="font-medium text-white">${sortedDomains.length}</span> domains
+            <span class="font-medium text-white">${Math.min(
+              end,
+              sortedDomains.length
+            )}</span> of
+            <span class="font-medium text-white">${
+              sortedDomains.length
+            }</span> domains
           `;
         }
 
         // Update pagination buttons
-        const paginationContainer = document.getElementById('pagination-buttons');
+        const paginationContainer =
+          document.getElementById("pagination-buttons");
         if (paginationContainer) {
-          paginationContainer.innerHTML = '';
+          paginationContainer.innerHTML = "";
 
           // Previous button
-          const prevButton = document.createElement('button');
-          prevButton.className = `px-3 py-1 rounded ${currentPage === 1 ? 'text-gray-500 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
-          prevButton.textContent = 'Previous';
+          const prevButton = document.createElement("button");
+          prevButton.className = `px-3 py-1 rounded ${
+            currentPage === 1
+              ? "text-gray-500 cursor-not-allowed"
+              : "text-gray-400 hover:text-white hover:bg-gray-700"
+          }`;
+          prevButton.textContent = "Previous";
           prevButton.disabled = currentPage === 1;
           prevButton.onclick = () => {
             if (currentPage > 1) {
@@ -1155,9 +1268,12 @@
 
           // Calculate page range to show
           const maxVisiblePages = 5;
-          let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+          let startPage = Math.max(
+            1,
+            currentPage - Math.floor(maxVisiblePages / 2)
+          );
           let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-          
+
           // Adjust start page if we're near the end
           if (endPage - startPage + 1 < maxVisiblePages) {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -1165,9 +1281,10 @@
 
           // First page button if not in range
           if (startPage > 1) {
-            const firstPageButton = document.createElement('button');
-            firstPageButton.className = 'px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700';
-            firstPageButton.textContent = '1';
+            const firstPageButton = document.createElement("button");
+            firstPageButton.className =
+              "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
+            firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
               currentPage = 1;
               renderDomains();
@@ -1176,17 +1293,21 @@
 
             // Ellipsis if needed
             if (startPage > 2) {
-              const ellipsis = document.createElement('span');
-              ellipsis.className = 'px-2 text-gray-400';
-              ellipsis.textContent = '...';
+              const ellipsis = document.createElement("span");
+              ellipsis.className = "px-2 text-gray-400";
+              ellipsis.textContent = "...";
               paginationContainer.appendChild(ellipsis);
             }
           }
 
           // Page numbers
           for (let i = startPage; i <= endPage; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.className = `px-3 py-1 rounded ${currentPage === i ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
+            const pageButton = document.createElement("button");
+            pageButton.className = `px-3 py-1 rounded ${
+              currentPage === i
+                ? "bg-indigo-600 text-white"
+                : "text-gray-400 hover:text-white hover:bg-gray-700"
+            }`;
             pageButton.textContent = i;
             pageButton.onclick = () => {
               currentPage = i;
@@ -1199,14 +1320,15 @@
           if (endPage < totalPages) {
             // Ellipsis if needed
             if (endPage < totalPages - 1) {
-              const ellipsis = document.createElement('span');
-              ellipsis.className = 'px-2 text-gray-400';
-              ellipsis.textContent = '...';
+              const ellipsis = document.createElement("span");
+              ellipsis.className = "px-2 text-gray-400";
+              ellipsis.textContent = "...";
               paginationContainer.appendChild(ellipsis);
             }
 
-            const lastPageButton = document.createElement('button');
-            lastPageButton.className = 'px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700';
+            const lastPageButton = document.createElement("button");
+            lastPageButton.className =
+              "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             lastPageButton.textContent = totalPages;
             lastPageButton.onclick = () => {
               currentPage = totalPages;
@@ -1216,9 +1338,13 @@
           }
 
           // Next button
-          const nextButton = document.createElement('button');
-          nextButton.className = `px-3 py-1 rounded ${currentPage === totalPages ? 'text-gray-500 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`;
-          nextButton.textContent = 'Next';
+          const nextButton = document.createElement("button");
+          nextButton.className = `px-3 py-1 rounded ${
+            currentPage === totalPages
+              ? "text-gray-500 cursor-not-allowed"
+              : "text-gray-400 hover:text-white hover:bg-gray-700"
+          }`;
+          nextButton.textContent = "Next";
           nextButton.disabled = currentPage === totalPages;
           nextButton.onclick = () => {
             if (currentPage < totalPages) {
@@ -1232,23 +1358,24 @@
 
       // Function to format duration in a human-readable way
       function formatDuration(seconds) {
-        if (!seconds) return '0s';
-        
+        if (!seconds) return "0s";
+
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const remainingSeconds = seconds % 60;
-        
+
         const parts = [];
         if (hours > 0) parts.push(`${hours}h`);
         if (minutes > 0) parts.push(`${minutes}m`);
-        if (remainingSeconds > 0 || parts.length === 0) parts.push(`${remainingSeconds}s`);
-        
-        return parts.join(' ');
+        if (remainingSeconds > 0 || parts.length === 0)
+          parts.push(`${remainingSeconds}s`);
+
+        return parts.join(" ");
       }
 
       // Function to parse Python timedelta string (e.g., '0:00:03.188102') to seconds
       function parsePythonTimedelta(timedeltaStr) {
-        if (!timedeltaStr || typeof timedeltaStr !== 'string') return null;
+        if (!timedeltaStr || typeof timedeltaStr !== "string") return null;
         // Format: H:MM:SS.microseconds
         const match = timedeltaStr.match(/^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$/);
         if (!match) return null;
@@ -1261,9 +1388,9 @@
 
       // Function to update scan duration
       function updateScanDuration(duration) {
-        const scanDurationSpan = document.getElementById('scan-duration');
+        const scanDurationSpan = document.getElementById("scan-duration");
         if (scanDurationSpan) {
-          if (typeof duration === 'string') {
+          if (typeof duration === "string") {
             // Try to parse as Python timedelta string
             const seconds = parsePythonTimedelta(duration);
             if (seconds !== null) {
@@ -1271,23 +1398,23 @@
             } else {
               scanDurationSpan.textContent = duration;
             }
-          } else if (typeof duration === 'number') {
+          } else if (typeof duration === "number") {
             scanDurationSpan.textContent = formatDuration(duration);
           } else {
-            scanDurationSpan.textContent = '0s';
+            scanDurationSpan.textContent = "0s";
           }
         }
       }
 
       // Function to update domain list
       function updateDomainList(data) {
-        const totalDomainsSpan = document.getElementById('total-domains');
-        const foundDomainsSpan = document.getElementById('found-domains');
-        const searchEnginesSpan = document.getElementById('search-engines');
-        
+        const totalDomainsSpan = document.getElementById("total-domains");
+        const foundDomainsSpan = document.getElementById("found-domains");
+        const searchEnginesSpan = document.getElementById("search-engines");
+
         // Get domains array from the response
         const domains = data.domains || [];
-        
+
         // Update total domains count
         if (totalDomainsSpan) {
           totalDomainsSpan.textContent = domains.length;
@@ -1310,7 +1437,10 @@
 
         // Sort domains in descending order and update global state
         sortedDomains = [...domains].reverse();
-        totalPages = Math.max(1, Math.ceil(sortedDomains.length / itemsPerPage));
+        totalPages = Math.max(
+          1,
+          Math.ceil(sortedDomains.length / itemsPerPage)
+        );
         if (currentPage > totalPages) currentPage = totalPages;
         renderDomains();
       }
@@ -1318,17 +1448,17 @@
       // Function to fetch domains from API
       async function fetchDomains() {
         try {
-          const response = await fetch('/api/domains');
+          const response = await fetch("/api/domains");
           const data = await response.json();
-          
+
           if (data.error) {
-            console.error('API returned error:', data.error);
+            console.error("API returned error:", data.error);
             return { domains: [], last_updated: null };
           }
-          
+
           return data;
         } catch (error) {
-          console.error('Error fetching domains:', error);
+          console.error("Error fetching domains:", error);
           return { domains: [], last_updated: null };
         }
       }
@@ -1336,9 +1466,8 @@
       // Function to start polling
       let lastUpdateTime = null;
       function startPolling() {
-        
         // Initial fetch
-        fetchDomains().then(data => {
+        fetchDomains().then((data) => {
           if (data.domains) {
             updateDomainList(data);
             lastUpdateTime = data.last_updated;
@@ -1356,7 +1485,7 @@
       }
 
       // Start polling when the page loads
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener("DOMContentLoaded", () => {
         startPolling();
       });
     </script>

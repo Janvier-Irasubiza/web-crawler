@@ -9,5 +9,6 @@ __pycache__/
 *.pyz
 logs/
 data/
+data/*.db
 dump/
 chromedriver

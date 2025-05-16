@@ -6,9 +6,9 @@ import os
 import subprocess
 import signal
 import sys
-from datetime import datetime
 import uvicorn
 import logging
+from typing import Any, Dict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,16 +21,31 @@ app.mount("/static", StaticFiles(directory="templates"), name="static")
 
 # Store the crawler process
 crawler_process = None
+analytics_process = None
 
 def start_crawler():
     global crawler_process
     if crawler_process is None:
         try:
             # Start the crawler as a subprocess
-            crawler_process = subprocess.Popen([sys.executable, "rw_crawler.py"])
+            crawler_process = subprocess.Popen([sys.executable, "crawler/rw_crawler.py"])
+            logger.info("Crawler process started")
             return True
         except Exception as e:
             logger.error(f"Error starting crawler: {e}")
+            return False
+    return True
+
+def start_analytics():
+    global analytics_process
+    if analytics_process is None:
+        try:
+            # Start the analytics as a subprocess
+            analytics_process = subprocess.Popen([sys.executable, "analytics/analytics.py"])
+            logger.info("Analytics process started")
+            return True
+        except Exception as e:
+            logger.error(f"Error starting analytics: {e}")
             return False
     return True
 
@@ -44,7 +59,7 @@ async def read_root():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/domains")
-async def get_domains():
+async def get_domains() -> Dict[str, Any]:
     try:
         json_path = "data/rw_domains.json"
         if not os.path.exists(json_path):
@@ -80,6 +95,12 @@ def cleanup():
     if crawler_process:
         crawler_process.terminate()
         crawler_process.wait()
+        logger.info("Crawler process terminated")
+    global analytics_process
+    if analytics_process:
+        analytics_process.terminate()
+        analytics_process.wait()
+        logger.info("Analytics process terminated")
 
 # Register cleanup handler
 signal.signal(signal.SIGINT, lambda s, f: cleanup())
@@ -88,5 +109,6 @@ signal.signal(signal.SIGTERM, lambda s, f: cleanup())
 if __name__ == "__main__":
     # Start the crawler when the server starts
     start_crawler()
+    start_analytics()
     # Start the server
     uvicorn.run(app, host="127.0.0.1", port=8000) 

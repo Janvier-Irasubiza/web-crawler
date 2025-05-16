@@ -9,7 +9,7 @@ import random
 import re
 import requests
 from bs4 import BeautifulSoup
-import dns.resolver  # pip install dnspython
+import dns.resolver
 import concurrent.futures
 
 # Set up logging
@@ -56,6 +56,7 @@ class RwDomainCrawler:
             'irembo.gov.rw'
         ]
 
+        self.is_scanning = False
         self.domain_data = {}
         self.visited_urls = set()
         self.visited_domains = set()
@@ -780,7 +781,7 @@ if __name__ == "__main__":
         max_pages=5000,
         max_depth=3,   
         concurrent_requests=5,
-        respect_robots=True 
+        respect_robots=True,
     )
     domain_data = crawler.crawl()
     
