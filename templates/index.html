@@ -1484,9 +1484,138 @@
         }, 5000);
       }
 
-      // Start polling when the page loads
-      document.addEventListener("DOMContentLoaded", () => {
-        startPolling();
+      // Analytics data handling
+      async function fetchAnalytics(domain, dateRange) {
+        try {
+          const response = await fetch(
+            `/api/analytics?domain=${encodeURIComponent(domain)}&range=${dateRange}`
+          );
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Error fetching analytics:", error);
+          return null;
+        }
+      }
+
+      function updateAnalyticsUI(data) {
+        // Update overview stats
+        document.getElementById("total-visitors").textContent =
+          data.totalVisitors || "0";
+        document.getElementById("avg-time").textContent =
+          formatTime(data.averageTime) || "0:00";
+        document.getElementById("top-region").textContent =
+          data.topRegion || "N/A";
+        document.getElementById("bounce-rate").textContent = `${
+          data.bounceRate || "0"
+        }%`;
+
+        // Update charts
+        updateCharts(data);
+        updateVisitorTable(data.visitors);
+      }
+
+      function formatTime(minutes) {
+        if (!minutes) return "0:00";
+        const hrs = Math.floor(minutes / 60);
+        const mins = Math.floor(minutes % 60);
+        return hrs > 0
+          ? `${hrs}:${mins.toString().padStart(2, "0")}`
+          : `${mins}:00`;
+      }
+
+      function updateCharts(data) {
+        // Update Region Chart
+        if (charts.region && data.regionData) {
+          charts.region.data.datasets[0].data = Object.values(data.regionData);
+          charts.region.data.labels = Object.keys(data.regionData);
+          charts.region.update();
+        }
+
+        // Update Time Chart
+        if (charts.time && data.timeData) {
+          charts.time.data.datasets[0].data = data.timeData.values;
+          charts.time.data.labels = data.timeData.labels;
+          charts.time.update();
+        }
+
+        // Update Traffic Chart
+        if (charts.traffic && data.trafficData) {
+          charts.traffic.data.datasets[0].data = data.trafficData.values;
+          charts.traffic.data.labels = data.trafficData.labels;
+          charts.traffic.update();
+        }
+
+        // Update Geo Chart
+        if (charts.geo && data.geoData) {
+          charts.geo.data.datasets[0].data = data.geoData;
+          charts.geo.update();
+        }
+      }
+
+      function updateVisitorTable(visitors) {
+        const tableBody = document.getElementById("visitor-data");
+        if (!tableBody || !visitors) return;
+
+        tableBody.innerHTML = "";
+        visitors.forEach((visitor) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.ip}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.location}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.region}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.timeSpent}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.pagesViewed}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.lastVisit}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Add event listener for the scan button
+      document.getElementById("scan-button").addEventListener("click", async () => {
+        const domain = document.getElementById("domain").value;
+        const dateRange = document.getElementById("date-range").value;
+
+        if (!domain) {
+          alert("Please enter a domain");
+          return;
+        }
+
+        // Show loading state
+        document.getElementById("scan-button").disabled = true;
+        document.getElementById("scan-button").innerHTML = `
+            <div class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Analyzing...
+            </div>
+        `;
+
+        try {
+          const data = await fetchAnalytics(domain, dateRange);
+          if (data) {
+            // Show results container
+            document.getElementById("results-container").classList.remove("hidden");
+            updateAnalyticsUI(data);
+          }
+        } catch (error) {
+          console.error("Error during analysis:", error);
+          alert("An error occurred during analysis. Please try again.");
+        } finally {
+          // Reset button state
+          document.getElementById("scan-button").disabled = false;
+          document.getElementById("scan-button").innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                Start Website Analysis
+            </div>
+        `;
+        }
       });
     </script>
   </body>
