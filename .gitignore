@@ -10,5 +10,13 @@ __pycache__/
 logs/
 data/
 data/*.db
+app/crawlers/data/
+app/crawlers/data/*.db
 dump/
 chromedriver
+scripts/recon/node_modules/
+scripts/recon/package-lock.json
+scripts/recon/vulnerability_report.json
+scripts/recon/vulnerabilities.json
+crawlers/__pycache__/
+crawlers/data/

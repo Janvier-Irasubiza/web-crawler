@@ -1,146 +1,66 @@
-from fastapi import FastAPI, Request, Depends, HTTPException
-from pydantic import BaseModel, field_validator
-from typing import Optional
-from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
-import sqlite3
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import json
+import os
+import subprocess
+import signal
+import sys
 import uvicorn
-from typing import Any
-from contextlib import contextmanager
-import threading
+import logging
+from typing import Any, Dict
+from typing import Optional, List
+from datetime import datetime
+from crawlers.analytics import AnalyticsData, get_db
 
-app = FastAPI(title="Analytics Server")
-PORT = 3001
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Setup CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, set this to your specific domain
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI(title="Web Crawler", description="WebCrawler that returns number of viewers of a certain website, their region and time spent viewing. Also to return all .rw websites out there in the internet.")
 
-# Database setup 
-DB_PATH = "data/analytics.db"
+# Mount the static files (templates directory)
+app.mount("/static", StaticFiles(directory="templates"), name="static")
 
-def init_db():
-    """Initialize the SQLite database with required tables"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Create analytics_events table with domain field
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS analytics_events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        session_id TEXT NOT NULL,
-        domain TEXT,
-        event_type TEXT,
-        timestamp TEXT NOT NULL,
-        page_views INTEGER DEFAULT 0,
-        time_spent REAL DEFAULT 0,
-        request_ip TEXT,
-        raw_data TEXT NOT NULL
-    )
-    ''')
-    
-    # Create index on domain for faster lookups
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_domain ON analytics_events(domain)')
-    
-    # Create index on timestamp for faster date filtering
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON analytics_events(timestamp)')
-    
-    # Create index on session_id for faster lookups
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_session_id ON analytics_events(session_id)')
-    
-    # Create index on request_ip for faster lookups
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_request_ip ON analytics_events(request_ip)')
-    
-    # Create regions table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS regions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_id INTEGER NOT NULL,
-        city TEXT,
-        region TEXT,
-        country TEXT,
-        ip TEXT,
-        FOREIGN KEY (event_id) REFERENCES analytics_events(id)
-    )
-    ''')
-    
-    conn.commit()
-    conn.close()
+# Store the crawler process
+crawler_process = None
+analytics_process = None
 
-# Initialize DB at startup
-init_db()
-
-# Thread-safe database connection management
-local = threading.local()
-
-@contextmanager
-def get_db():
-    """Thread-safe database connection management"""
-    if not hasattr(local, 'db'):
-        local.db = sqlite3.connect(DB_PATH)
-        local.db.row_factory = sqlite3.Row
-    try:
-        yield local.db
-    except Exception as e:
-        local.db.rollback()
-        raise e
-    else:
-        local.db.commit()
-
-# Pydantic models for request validation
-class RegionData(BaseModel):
-    city: Optional[str] = None
-    region: Optional[str] = None
-    country: Optional[str] = None
-    ip: Optional[str] = None
-
-class AnalyticsData(BaseModel):
-    sessionId: str
-    domain: Optional[str] = None
-    eventType: Optional[str] = None
-    timestamp: Optional[str] = None
-    pageViews: Optional[int] = 0
-    timeSpent: Optional[float] = 0
-    region: Optional[RegionData] = None
-
-    class Config:
-        extra = "allow"
-
-    @field_validator('timestamp', mode='before')
-    def validate_timestamp(cls, v: str) -> str:
-        if not v:
-            return datetime.now().isoformat()
+def start_crawler():
+    global crawler_process
+    if crawler_process is None:
         try:
-            # Try to parse the date string in ISO format
-            datetime.fromisoformat(v.replace('Z', '+00:00'))
-            return v
-        except ValueError:
-            raise ValueError("Date must be in ISO format (YYYY-MM-DDTHH:MM:SS)")
+            # Start the crawler as a subprocess
+            crawler_process = subprocess.Popen([sys.executable, "crawlers/rw_crawler.py"])
+            logger.info("Domain crawler process started")
+            return True
+        except Exception as e:
+            logger.error(f"Error starting crawler: {e}")
+            return False
+    return True
 
-# Request model for analytics query
-class AnalyticsQuery(BaseModel):
-    domain: Optional[str] = None
-    ip: Optional[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+def start_analytics_server():
+    global analytics_process
+    if analytics_process is None:
+        try:
+            # Start the analytics as a subprocess
+            analytics_process = subprocess.Popen([sys.executable, "crawlers/analytics.py"])
+            logger.info("Analytics process started")
+            return True
+        except Exception as e:
+            logger.error(f"Error starting analytics: {e}")
+            return False
+    return True
+
+@app.get("/")
+async def read_root():
+    try:
+        logger.info("Serving index.html")
+        return FileResponse("templates/index.html", media_type="text/html")
+    except Exception as e:
+        logger.error(f"Error serving index.html: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     
-    @field_validator('start_date', 'end_date')
-    def validate_date_format(cls, v: str) -> str:
-        if v:
-            try:
-                # Try to parse the date string in ISO format
-                datetime.fromisoformat(v.replace('Z', '+00:00'))
-                return v
-            except ValueError:
-                raise ValueError("Date must be in ISO format (YYYY-MM-DDTHH:MM:SS)")
-        return v
-
 # Analytics endpoint
 @app.post("/analytics")
 async def analytics(
@@ -274,7 +194,6 @@ async def get_analytics(
             results = cursor.fetchall()
             
             # Convert to list of dicts
-            from typing import List
             events: List[dict[str, Any]] = []
             for row in results:
                 row_dict = dict(row)
@@ -410,7 +329,57 @@ async def get_analytics_summary(
             print(f"Error retrieving analytics summary: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Failed to retrieve analytics summary: {str(e)}")
 
+@app.get("/api/domains")
+async def get_domains() -> Dict[str, Any]:
+    try:
+        json_path = "data/rw_domains.json"
+        if not os.path.exists(json_path):
+            logger.warning(f"File not found: {json_path}")
+            return {"domains": [], "last_updated": None}
+
+        with open(json_path, "r", encoding='utf-8') as f:
+            data = json.load(f)
+            # Extract the list of domain objects
+            domains = data.get("domains", [])
+            last_updated = data.get("metadata", {}).get("crawl_date")
+            logger.info(f"Found {len(domains)} domains")
+            logger.info(f"Last updated: {last_updated}")
+            return {
+                "domains": domains,
+                "last_updated": last_updated,
+                "metadata": data.get("metadata", {})
+            }
+    except Exception as e:
+        logger.error(f"Error reading domains: {e}")
+        return {"domains": [], "last_updated": None, "error": str(e)}
+
+@app.post("/api/start-crawler")
+async def start_crawler_endpoint():
+    success = start_crawler()
+    if success:
+        return {"status": "success", "message": "Crawler started successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to start crawler")
+
+def cleanup():
+    global crawler_process
+    if crawler_process:
+        crawler_process.terminate()
+        crawler_process.wait()
+        logger.info("Crawler process terminated")
+    global analytics_process
+    if analytics_process:
+        analytics_process.terminate()
+        analytics_process.wait()
+        logger.info("Analytics process terminated")
+
+# Register cleanup handler
+signal.signal(signal.SIGINT, lambda s, f: cleanup())
+signal.signal(signal.SIGTERM, lambda s, f: cleanup())
+
 if __name__ == "__main__":
-    print(f"Analytics server running on port {PORT}")
-    print(f"API documentation available at http://localhost:{PORT}/docs")
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    # Start the crawler when the server starts
+    start_crawler()
+    start_analytics_server()
+    # Start the server
+    uvicorn.run(app, host="127.0.0.1", port=8000)
