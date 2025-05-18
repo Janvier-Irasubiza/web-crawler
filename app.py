@@ -361,7 +361,7 @@ async def start_crawler_endpoint():
     else:
         raise HTTPException(status_code=500, detail="Failed to start crawler")
     
-@app.post("/api/analytics-script")
+@app.get("/api/analytics-script")
 async def get_analytics_script():
     script_path = "scripts/analytics.js"
     if not os.path.exists(script_path):
