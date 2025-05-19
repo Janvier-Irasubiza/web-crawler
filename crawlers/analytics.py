@@ -13,7 +13,7 @@ app = FastAPI(title="Analytics API", description="API for handling analytics dat
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, set this to your specific domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
