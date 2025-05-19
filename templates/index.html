@@ -1634,6 +1634,68 @@
           ];
           charts.engagement.update();
         }
+
+        // Update Detailed Visitor Data table
+        const visitorTableBody = document.getElementById("visitor-data");
+        if (visitorTableBody) {
+          visitorTableBody.innerHTML = "";
+
+          // Group analytics by session to show latest event for each visitor
+          const latestSessionEvents = Object.values(
+            data.results.reduce((acc, curr) => {
+              if (
+                !acc[curr.session_id] ||
+                new Date(acc[curr.session_id].timestamp) <
+                  new Date(curr.timestamp)
+              ) {
+                acc[curr.session_id] = curr;
+              }
+              return acc;
+            }, {})
+          );
+
+          // Sort by timestamp descending (most recent first)
+          latestSessionEvents.sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          );
+
+          latestSessionEvents.forEach((event) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${event.request_ip || event.region.ip || "--"}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${event.region.city}, ${event.region.country}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${event.region.region}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${formatDuration(event.time_spent)}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${event.page_views}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                ${formatDateTime(event.timestamp)}
+              </td>
+            `;
+            visitorTableBody.appendChild(row);
+          });
+
+          // Update results count in pagination
+          const paginationInfo = visitorTableBody
+            .closest(".bg-gray-800")
+            .querySelector(".text-gray-400");
+          if (paginationInfo) {
+            paginationInfo.innerHTML = `
+              Showing <span class="font-medium text-white">1</span> to
+              <span class="font-medium text-white">${latestSessionEvents.length}</span> of
+              <span class="font-medium text-white">${latestSessionEvents.length}</span> results
+            `;
+          }
+        }
       }
 
       // Add this to your DOMContentLoaded event listener
