@@ -10,6 +10,8 @@ async function getRegionInfo() {
     try {
         const response = await fetch('http://16.171.174.116/api/geolocation');
         const data = await response.json();
+        console.log('Geolocation data:', data);
+
         return {
             country: data.country_name,
             region: data.region,
