@@ -178,73 +178,6 @@
           id="input-form"
           class="slide-up bg-gray-800 p-6 rounded-lg shadow-lg mb-8 gradient-border"
         >
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <label for="domain" class="block font-medium text-gray-300 mb-1"
-                >Website Domain</label
-              >
-              <div class="relative">
-                <div
-                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                >
-                  <svg
-                    class="h-5 w-5 text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  id="domain"
-                  placeholder="e.g. igihe.com"
-                  class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                for="date-range"
-                class="block font-medium text-gray-300 mb-1"
-                >Date Range</label
-              >
-              <div class="relative">
-                <div
-                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                >
-                  <svg
-                    class="h-5 w-5 text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <select
-                  id="date-range"
-                  class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="7days">Last 7 days</option>
-                  <option value="30days">Last 30 days</option>
-                  <option value="90days">Last 90 days</option>
-                  <option value="custom">Custom range</option>
-                </select>
-              </div>
-            </div>
-            <div></div>
-          </div>
-
           <div class="mt-6 flex justify-center">
             <button
               id="scan-button"
@@ -265,7 +198,7 @@
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   ></path>
                 </svg>
-                Start Website Analysis
+                <span class="text-lg font-semibold">Scan Now</span>
               </div>
             </button>
           </div>
@@ -1532,50 +1465,104 @@
         renderDomains();
       }
 
-      // Function to format date and time in a human-readable format
-      function formatDateTime(dateString) {
-        if (!dateString) return "--";
-
+      // Add this function to fetch analytics data
+      async function fetchAnalyticsData() {
         try {
-          const date = new Date(dateString);
+          const response = await fetch("/analytics/data");
+          const data = await response.json();
 
-          // Check if date is valid
-          if (isNaN(date.getTime())) return "Invalid Date";
-
-          // Get time difference in milliseconds
-          const now = new Date();
-          const diff = now - date;
-          const seconds = Math.floor(diff / 1000);
-          const minutes = Math.floor(seconds / 60);
-          const hours = Math.floor(minutes / 60);
-          const days = Math.floor(hours / 24);
-
-          // Return relative time if recent
-          if (days < 1) {
-            if (hours < 1) {
-              if (minutes < 1) {
-                return "Just now";
-              }
-              return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
-            }
-            return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+          if (data.success) {
+            updateAnalyticsDashboard(data.results);
           }
-
-          // For older dates, return formatted date
-          const options = {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          };
-
-          return date.toLocaleDateString("en-US", options);
         } catch (error) {
-          console.error("Date formatting error:", error);
-          return "Invalid Date";
+          console.error("Error fetching analytics:", error);
         }
       }
+
+      // Add this function to update the dashboard with analytics data
+      function updateAnalyticsDashboard(analytics) {
+        // Get unique sessions
+        const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
+
+        // Update total visitors
+        document.getElementById("total-visitors").textContent =
+          uniqueSessions.length;
+
+        // Calculate average time spent
+        const avgTimeSpent =
+          analytics.reduce((acc, curr) => acc + curr.time_spent, 0) /
+          analytics.length;
+        document.getElementById("avg-time").textContent = formatDuration(
+          Math.round(avgTimeSpent)
+        );
+
+        // Get regions data for chart
+        const regionCounts = analytics.reduce((acc, curr) => {
+          const region = curr.region.region;
+          acc[region] = (acc[region] || 0) + 1;
+          return acc;
+        }, {});
+
+        // Update regions chart
+        if (charts.region) {
+          charts.region.data.labels = Object.keys(regionCounts);
+          charts.region.data.datasets[0].data = Object.values(regionCounts);
+          charts.region.update();
+        }
+
+        // Update visitor table
+        const visitorTableBody = document.getElementById("visitor-data");
+        visitorTableBody.innerHTML = "";
+
+        // Group by session_id to show unique visitors
+        const visitorsBySession = analytics.reduce((acc, curr) => {
+          if (!acc[curr.session_id]) {
+            acc[curr.session_id] = {
+              ip: curr.region.ip,
+              location: `${curr.region.city}, ${curr.region.country}`,
+              region: curr.region.region,
+              timeSpent: curr.time_spent,
+              pagesViewed: curr.page_views,
+              lastVisit: curr.timestamp,
+            };
+          }
+          return acc;
+        }, {});
+
+        Object.values(visitorsBySession).forEach((visitor) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
+              visitor.ip
+            }</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
+              visitor.location
+            }</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
+              visitor.region
+            }</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDuration(
+              visitor.timeSpent
+            )}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
+              visitor.pagesViewed
+            }</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(
+              visitor.lastVisit
+            )}</td>
+          `;
+          visitorTableBody.appendChild(row);
+        });
+      }
+
+      // Add this to your DOMContentLoaded event listener
+      document.addEventListener("DOMContentLoaded", () => {
+        // Fetch initial analytics data
+        fetchAnalyticsData();
+
+        // Poll for updates every 30 seconds
+        setInterval(fetchAnalyticsData, 30000);
+      });
 
       // Replace the existing polling functions with this simplified version
       function startPolling() {
