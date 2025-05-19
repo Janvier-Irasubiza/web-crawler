@@ -172,36 +172,36 @@
       </div>
 
       <!-- Analytics Tab Content -->
-      <div id="analytics-content" class="tab-content active">
+      <div id="analytics-content" class="tab-content active space-y-12">
         <!-- Input Form -->
-        <div
-          id="input-form"
-          class="slide-up bg-gray-800 p-6 rounded-lg shadow-lg mb-8 gradient-border"
-        >
-          <div class="mt-6 flex justify-center">
-            <button
-              id="scan-button"
-              class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-900 transform transition hover:-translate-y-0.5"
+        <div class="flex items-center justify-between">
+          <h1 class="items-center flex space-x-2">
+            <span class="text-4xl font-bold text-gray-300"
+              >Analytics Collection Platform</span
             >
-              <div class="flex items-center">
-                <svg
-                  class="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-                <span class="text-lg font-semibold">Scan Now</span>
-              </div>
-            </button>
-          </div>
+            <span>Juice Shop</span>
+          </h1>
+          <button
+            id="scan-button"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            onclick="reloadAnalytics()"
+          >
+            <svg
+              class="w-5 h-5 inline-block mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+            Reload
+          </button>
         </div>
 
         <!-- Results Container (Initially Hidden) -->
@@ -938,11 +938,11 @@
         time: {
           type: "line",
           data: {
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            labels: [], // Will be populated with timestamps
             datasets: [
               {
-                label: "Average Time (minutes)",
-                data: [4.2, 5.1, 3.8, 4.5, 4.9, 6.2, 5.8],
+                label: "Time Spent (seconds)",
+                data: [], // Will be populated with time_spent values
                 borderColor: "#8B5CF6",
                 tension: 0.4,
                 fill: true,
@@ -955,26 +955,20 @@
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                labels: {
-                  color: "#E5E7EB",
-                },
+                labels: { color: "#E5E7EB" },
               },
             },
             scales: {
               y: {
-                grid: {
-                  color: "rgba(255, 255, 255, 0.1)",
-                },
-                ticks: {
-                  color: "#E5E7EB",
-                },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#E5E7EB" },
               },
               x: {
-                grid: {
-                  color: "rgba(255, 255, 255, 0.1)",
-                },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
                 ticks: {
                   color: "#E5E7EB",
+                  maxRotation: 45,
+                  minRotation: 45,
                 },
               },
             },
@@ -1183,29 +1177,6 @@
           lastVisit: "2024-03-15 14:10",
         },
       ];
-
-      // Populate visitor data table
-      const visitorTableBody = document.getElementById("visitor-data");
-      if (visitorTableBody) {
-        visitorData.forEach((data) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.ip}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.location}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.region}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.timeSpent}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.pagesViewed}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${data.lastVisit}</td>
-          `;
-          visitorTableBody.appendChild(row);
-        });
-      }
-
-      // Pagination state (global for domains table)
-      let currentPage = 1;
-      let totalPages = 1;
-      let sortedDomains = [];
-      const itemsPerPage = 10;
 
       // Function to render domains for current page
       function renderDomains() {
@@ -1472,15 +1443,16 @@
           const data = await response.json();
 
           if (data.success) {
-            updateAnalyticsDashboard(data.results);
+            updateAnalyticsDashboard(data);
           }
         } catch (error) {
           console.error("Error fetching analytics:", error);
         }
       }
 
-      // Add this function to update the dashboard with analytics data
-      function updateAnalyticsDashboard(analytics) {
+      function updateAnalyticsDashboard(data) {
+        const analytics = data.results;
+
         // Get unique sessions
         const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
 
@@ -1488,71 +1460,111 @@
         document.getElementById("total-visitors").textContent =
           uniqueSessions.length;
 
-        // Calculate average time spent
+        // Calculate average time spent (use the most recent time_spent for each session)
+        const latestSessionTimes = analytics.reduce((acc, curr) => {
+          if (
+            !acc[curr.session_id] ||
+            acc[curr.session_id].timestamp < curr.timestamp
+          ) {
+            acc[curr.session_id] = curr;
+          }
+          return acc;
+        }, {});
+
         const avgTimeSpent =
-          analytics.reduce((acc, curr) => acc + curr.time_spent, 0) /
-          analytics.length;
+          Object.values(latestSessionTimes).reduce(
+            (acc, curr) => acc + curr.time_spent,
+            0
+          ) / uniqueSessions.length;
+
         document.getElementById("avg-time").textContent = formatDuration(
           Math.round(avgTimeSpent)
         );
 
-        // Get regions data for chart
+        // Get top region
         const regionCounts = analytics.reduce((acc, curr) => {
           const region = curr.region.region;
           acc[region] = (acc[region] || 0) + 1;
           return acc;
         }, {});
 
-        // Update regions chart
+        const topRegion = Object.entries(regionCounts).sort(
+          (a, b) => b[1] - a[1]
+        )[0];
+
+        document.getElementById("top-region").textContent = topRegion[0];
+
+        // Calculate bounce rate (sessions with only 1 page view)
+        const bounceRate =
+          (uniqueSessions.filter((sessionId) => {
+            const sessionEvents = analytics.filter(
+              (a) => a.session_id === sessionId
+            );
+            return Math.max(...sessionEvents.map((e) => e.page_views)) === 1;
+          }).length /
+            uniqueSessions.length) *
+          100;
+
+        document.getElementById(
+          "bounce-rate"
+        ).textContent = `${bounceRate.toFixed(1)}%`;
+
+        // Update region chart
         if (charts.region) {
-          charts.region.data.labels = Object.keys(regionCounts);
-          charts.region.data.datasets[0].data = Object.values(regionCounts);
+          const regionData = Object.entries(regionCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+          charts.region.data.labels = regionData.map(([region]) => region);
+          charts.region.data.datasets[0].data = regionData.map(
+            ([, count]) => count
+          );
           charts.region.update();
         }
 
-        // Update visitor table
+        // Update visitor table with real data
         const visitorTableBody = document.getElementById("visitor-data");
         visitorTableBody.innerHTML = "";
 
-        // Group by session_id to show unique visitors
-        const visitorsBySession = analytics.reduce((acc, curr) => {
-          if (!acc[curr.session_id]) {
-            acc[curr.session_id] = {
-              ip: curr.region.ip,
-              location: `${curr.region.city}, ${curr.region.country}`,
-              region: curr.region.region,
-              timeSpent: curr.time_spent,
-              pagesViewed: curr.page_views,
-              lastVisit: curr.timestamp,
-            };
-          }
-          return acc;
-        }, {});
+        // Group by session and show latest event for each session
+        const latestSessionEvents = Object.values(latestSessionTimes);
 
-        Object.values(visitorsBySession).forEach((visitor) => {
+        latestSessionEvents.forEach((event) => {
           const row = document.createElement("tr");
           row.innerHTML = `
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              visitor.ip
+              event.region.ip
             }</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              visitor.location
-            }</td>
+              event.region.city
+            }, ${event.region.country}</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              visitor.region
+              event.region.region
             }</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDuration(
-              visitor.timeSpent
+              event.time_spent
             )}</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              visitor.pagesViewed
+              event.page_views
             }</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(
-              visitor.lastVisit
+              event.timestamp
             )}</td>
           `;
           visitorTableBody.appendChild(row);
         });
+
+        // Update traffic chart with hourly distribution
+        if (charts.traffic) {
+          const hourlyData = new Array(24).fill(0);
+          analytics.forEach((event) => {
+            const hour = new Date(event.timestamp).getHours();
+            hourlyData[hour]++;
+          });
+
+          charts.traffic.data.datasets[0].data = hourlyData;
+          charts.traffic.update();
+        }
       }
 
       // Add this to your DOMContentLoaded event listener
