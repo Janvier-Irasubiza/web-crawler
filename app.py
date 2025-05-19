@@ -135,15 +135,7 @@ async def analytics(
 
 # Get analytics data endpoint
 @app.get("/analytics/data")
-async def get_analytics(
-    domain: Optional[str] = None,
-    ip: Optional[str] = None,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None
-) -> dict[str, Any]:
-    if not domain and not ip:
-        raise HTTPException(status_code=400, detail="Either domain or IP must be provided")
-    
+async def get_analytics() -> dict[str, Any]:
     with get_db() as conn:
         cursor = conn.cursor()
         
@@ -168,24 +160,7 @@ async def get_analytics(
         '''
         
         params: list[str] = []
-        
-        if domain:
-            query += " AND e.domain = ?"
-            params.append(domain)
-        
-        if ip:
-            query += " AND (e.request_ip = ? OR r.ip = ?)"
-            params.append(ip)
-            params.append(ip)
-        
-        if start_date:
-            query += " AND e.timestamp >= ?"
-            params.append(start_date)
-        
-        if end_date:
-            query += " AND e.timestamp <= ?"
-            params.append(end_date)
-        
+    
         # Order by timestamp
         query += " ORDER BY e.timestamp DESC"
         
@@ -220,36 +195,14 @@ async def get_analytics(
 
 # Get analytics summary endpoint - aggregated data
 @app.get("/analytics/summary")
-async def get_analytics_summary(
-    domain: Optional[str] = None,
-    ip: Optional[str] = None,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None
-) -> dict[str, Any]:
+async def get_analytics_summary() -> dict[str, Any]:
     with get_db() as conn:
         cursor = conn.cursor()
     
         # Base query conditions
         where_clause = "WHERE 1=1"
         params: list[str] = []
-    
-        if domain:
-            where_clause += " AND e.domain = ?"
-            params.append(domain)
-    
-        if ip:
-            where_clause += " AND (e.request_ip = ? OR r.ip = ?)"
-            params.append(ip)
-            params.append(ip)
-    
-        if start_date:
-            where_clause += " AND e.timestamp >= ?"
-            params.append(start_date)
-    
-        if end_date:
-            where_clause += " AND e.timestamp <= ?"
-            params.append(end_date)
-    
+        
         try:
             # Total sessions
             cursor.execute(f'''
