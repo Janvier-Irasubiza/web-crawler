@@ -43,6 +43,8 @@ class VisitorAnalytics {
     async init() {
         // Get region data
         this.regionInfo = await getRegionInfo();
+        console.log('Region info:', this.regionInfo);
+        
 
         // Register event listeners
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
