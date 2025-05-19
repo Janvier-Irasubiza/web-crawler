@@ -8,13 +8,13 @@ function generateSessionId() {
 // Get geolocation data (in a real scenario, you might use a more robust geolocation service)
 async function getRegionInfo() {
     try {
-        const response = await fetch('https://ipapi.co/json/');
+        const response = await fetch('http://16.171.174.116/api/geolocation');
         const data = await response.json();
         return {
             country: data.country_name,
             region: data.region,
             city: data.city,
-            ip: data.ip // Note: In a production environment, handle IP data with privacy considerations
+            ip: data.ip
         };
     } catch (error) {
         console.error('Error fetching geolocation:', error);
