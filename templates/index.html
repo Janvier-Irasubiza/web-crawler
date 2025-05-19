@@ -840,6 +840,12 @@
 
     <!-- JavaScript -->
     <script>
+      // Pagination variables
+      const itemsPerPage = 10;
+      let currentPage = 1;
+      let totalPages = 1;
+      let sortedDomains = [];
+
       // Tab switching functionality
       document.querySelectorAll(".tab-button").forEach((button) => {
         button.addEventListener("click", () => {
@@ -961,7 +967,10 @@
             scales: {
               y: {
                 grid: { color: "rgba(255, 255, 255, 0.1)" },
-                ticks: { color: "#E5E7EB" },
+                ticks: {
+                  color: "#E5E7EB",
+                  callback: (value) => formatDuration(value),
+                },
               },
               x: {
                 grid: { color: "rgba(255, 255, 255, 0.1)" },
@@ -1073,7 +1082,13 @@
             datasets: [
               {
                 label: "Visitors by Location",
-                data: [],
+                data: [
+                  { x: 30.0619, y: -1.9441, r: 20, location: "Kigali" },
+                  { x: 30.4358, y: -2.5967, r: 15, location: "Huye" },
+                  { x: 29.74, y: -1.95, r: 12, location: "Gisenyi" },
+                  { x: 30.0588, y: -1.9403, r: 10, location: "Kibuye" },
+                  { x: 29.75, y: -2.4667, r: 8, location: "Butare" },
+                ],
                 backgroundColor: "rgba(139, 92, 246, 0.6)",
                 borderColor: "#8B5CF6",
                 borderWidth: 1,
@@ -1503,8 +1518,16 @@
           "bounce-rate"
         ).textContent = `${bounceRate.toFixed(1)}%`;
 
-        // Update region chart
+        // Update all charts with real data
+
+        // 1. Update Region Chart (Doughnut)
         if (charts.region) {
+          const regionCounts = analytics.reduce((acc, curr) => {
+            const region = curr.region.region;
+            acc[region] = (acc[region] || 0) + 1;
+            return acc;
+          }, {});
+
           const regionData = Object.entries(regionCounts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5);
@@ -1516,48 +1539,100 @@
           charts.region.update();
         }
 
-        // Update visitor table with real data
-        const visitorTableBody = document.getElementById("visitor-data");
-        visitorTableBody.innerHTML = "";
+        // 2. Update Geographic Distribution Chart (Bubble)
+        if (charts.geo) {
+          const locationData = analytics.reduce((acc, curr) => {
+            const key = `${curr.region.city}-${curr.region.region}`;
+            if (!acc[key]) {
+              acc[key] = {
+                count: 0,
+                x: parseFloat(curr.region.longitude) || 0,
+                y: parseFloat(curr.region.latitude) || 0,
+                location: curr.region.city,
+              };
+            }
+            acc[key].count++;
+            return acc;
+          }, {});
 
-        // Group by session and show latest event for each session
-        const latestSessionEvents = Object.values(latestSessionTimes);
+          const bubbleData = Object.values(locationData).map((loc) => ({
+            x: loc.x,
+            y: loc.y,
+            r: Math.min(Math.max(loc.count * 2, 5), 20), // Scale bubble size between 5-20
+            location: loc.location,
+          }));
 
-        latestSessionEvents.forEach((event) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              event.region.ip
-            }</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              event.region.city
-            }, ${event.region.country}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              event.region.region
-            }</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDuration(
-              event.time_spent
-            )}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${
-              event.page_views
-            }</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(
-              event.timestamp
-            )}</td>
-          `;
-          visitorTableBody.appendChild(row);
-        });
+          charts.geo.data.datasets[0].data = bubbleData;
+          charts.geo.update();
+        }
 
-        // Update traffic chart with hourly distribution
+        // 3. Update Time Spent Analysis Chart (Line)
+        if (charts.time) {
+          // Group data by hour and calculate average time spent
+          const timeData = analytics.reduce((acc, curr) => {
+            const hour = new Date(curr.timestamp).getHours();
+            if (!acc[hour]) {
+              acc[hour] = { total: 0, count: 0 };
+            }
+            acc[hour].total += curr.time_spent;
+            acc[hour].count++;
+            return acc;
+          }, {});
+
+          const hours = Array.from({ length: 24 }, (_, i) => i);
+          const avgTimeData = hours.map((hour) => ({
+            hour,
+            avg: timeData[hour]
+              ? timeData[hour].total / timeData[hour].count
+              : 0,
+          }));
+
+          charts.time.data.labels = avgTimeData.map((d) => `${d.hour}:00`);
+          charts.time.data.datasets[0].data = avgTimeData.map((d) => d.avg);
+          charts.time.update();
+        }
+
+        // 4. Update Traffic Distribution Chart (Bar)
         if (charts.traffic) {
-          const hourlyData = new Array(24).fill(0);
+          const hourlyTraffic = new Array(24).fill(0);
           analytics.forEach((event) => {
             const hour = new Date(event.timestamp).getHours();
-            hourlyData[hour]++;
+            hourlyTraffic[hour]++;
           });
 
-          charts.traffic.data.datasets[0].data = hourlyData;
+          charts.traffic.data.datasets[0].data = hourlyTraffic;
           charts.traffic.update();
+        }
+
+        // 5. Update Engagement Chart (Radar) if it exists
+        if (charts.engagement) {
+          const engagement = {
+            pagesPerVisit:
+              analytics.reduce((acc, curr) => acc + curr.page_views, 0) /
+              analytics.length,
+            avgTime:
+              analytics.reduce((acc, curr) => acc + curr.time_spent, 0) /
+              analytics.length,
+            bounceRate:
+              (analytics.filter((a) => a.page_views === 1).length /
+                analytics.length) *
+              100,
+            newVisitors: analytics.filter((a) => a.event_type === "pageview")
+              .length,
+            returnRate:
+              (analytics.filter((a) => a.event_type === "return_visit").length /
+                analytics.length) *
+              100,
+          };
+
+          charts.engagement.data.datasets[0].data = [
+            engagement.pagesPerVisit,
+            engagement.avgTime / 60, // Convert to minutes
+            engagement.bounceRate,
+            engagement.newVisitors,
+            engagement.returnRate,
+          ];
+          charts.engagement.update();
         }
       }
 
@@ -1568,6 +1643,14 @@
 
         // Poll for updates every 30 seconds
         setInterval(fetchAnalyticsData, 30000);
+
+        // Initialize charts with empty data
+        Object.keys(chartConfigs).forEach((key) => {
+          const canvas = document.getElementById(`${key}-chart`);
+          if (canvas) {
+            charts[key] = new Chart(canvas, chartConfigs[key]);
+          }
+        });
       });
 
       // Replace the existing polling functions with this simplified version
