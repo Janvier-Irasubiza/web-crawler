@@ -1696,29 +1696,6 @@
         }
       }
 
-      // time frame filtering
-      document
-        .getElementById("time-frame-filter")
-        .addEventListener("change", function (event) {
-          const selectedTimeFrame = event.target.value;
-          // Fetch and update analytics data based on the selected time frame
-          fetchAnalyticsData(selectedTimeFrame);
-        });
-
-      // visitors table pagination
-      document
-        .getElementById("pagination-buttons")
-        .addEventListener("click", function (event) {
-          const target = event.target;
-          if (target.tagName === "BUTTON") {
-            const page = parseInt(target.textContent);
-            if (!isNaN(page)) {
-              currentPage = page;
-              renderDomains();
-            }
-          }
-        });
-
       // Add this to your DOMContentLoaded event listener
       document.addEventListener("DOMContentLoaded", () => {
         // Fetch initial analytics data
