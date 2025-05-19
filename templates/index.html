@@ -1647,7 +1647,7 @@
             const row = document.createElement("tr");
             row.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap text-gray-300">
-                ${event.request_ip || event.region.ip || "--"}
+                ${event.region.ip || event.request_ip || "--"}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-gray-300">
                 ${event.region.city}, ${event.region.country}
