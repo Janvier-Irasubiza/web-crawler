@@ -10,17 +10,24 @@ async function getRegionInfo() {
     try {
         const response = await fetch('https://ipwho.is/');
         const data = await response.json();
+
+        // Validate the response
+        if (!data || data.success === false) {
+            console.error('Invalid response from ipwho.is:', data);
+            return { country: 'Unknown', region: 'Unknown', city: 'Unknown', ip: 'Unknown' };
+        }
+
         console.log('Geolocation data:', data);
 
         return {
-            country: data.country_name,
-            region: data.region,
-            city: data.city,
-            ip: data.ip
+            country: data.country || 'Unknown',
+            region: data.region || 'Unknown',
+            city: data.city || 'Unknown',
+            ip: data.ip || 'Unknown'
         };
     } catch (error) {
         console.error('Error fetching geolocation:', error);
-        return { country: 'Unknown', region: 'Unknown', city: 'Unknown' };
+        return { country: 'Unknown', region: 'Unknown', city: 'Unknown', ip: 'Unknown' };
     }
 }
 
@@ -44,7 +51,7 @@ class VisitorAnalytics {
         // Get region data
         this.regionInfo = await getRegionInfo();
         console.log('Region info:', this.regionInfo);
-        
+
 
         // Register event listeners
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
