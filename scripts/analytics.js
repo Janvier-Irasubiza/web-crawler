@@ -8,7 +8,7 @@ function generateSessionId() {
 // Get geolocation data (in a real scenario, you might use a more robust geolocation service)
 async function getRegionInfo() {
     try {
-        const response = await fetch('http://16.171.174.116/api/geolocation');
+        const response = await fetch('https://ipwho.is/');
         const data = await response.json();
         console.log('Geolocation data:', data);
 

@@ -283,22 +283,6 @@ async def get_analytics_summary() -> dict[str, Any]:
             print(f"Error retrieving analytics summary: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Failed to retrieve analytics summary: {str(e)}")
 
-@app.get("/api/geolocation")
-async def get_geolocation(request: Request):
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get("https://ipwho.is/")
-            response.raise_for_status()
-            data = response.json()
-        return data
-    except Exception as e:
-        logger.error(f"Geolocation lookup failed: {e}")
-        return {
-            "country": "Unknown",
-            "region": "Unknown",
-            "city": "Unknown"
-        }
-
 # Get domains endpoint
 @app.get("/api/domains")
 async def get_domains() -> Dict[str, Any]:
