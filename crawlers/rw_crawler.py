@@ -37,21 +37,19 @@ class RwDomainCrawler:
             'yahoo'
         ]
 
-        # Additional starting points that don't rely on search engines
+        # Seed domains to start the crawl
         self.seed_domains = [
             'gov.rw',
             'minict.gov.rw',
             'risa.rw',
-            'visitrwanda.com',
             'ktpress.rw',
-            'kigalitoday.com',
             'newtimes.co.rw',
             'rba.co.rw',
             'moh.gov.rw',
             'rra.gov.rw',
-            'ur.ac.rw',  # University of Rwanda
-            'rdb.rw',    # Rwanda Development Board
-            'bnr.rw',    # National Bank of Rwanda
+            'ur.ac.rw', 
+            'rdb.rw',   
+            'bnr.rw',
             'mineduc.gov.rw',
             'irembo.gov.rw'
         ]
@@ -223,7 +221,8 @@ class RwDomainCrawler:
                     domain_data = {
                         'domain': normalized_domain,
                         'url': url,
-                        'title': title
+                        'title': title,
+                        'discovered_at': datetime.datetime.now().isoformat()
                     }
                     self.domain_data[normalized_domain] = domain_data
                     logging.info(f"Discovered new .rw domain: {normalized_domain} - {title}")
@@ -281,7 +280,8 @@ class RwDomainCrawler:
                                         domain_data = {
                                             'domain': normalized_domain,
                                             'url': f"http://{domain}",
-                                            'title': "Found via DNS zone transfer"
+                                            'title': "Found via DNS zone transfer",
+                                            'discovered_at': datetime.datetime.now().isoformat()
                                         }
                                         self.domain_data[normalized_domain] = domain_data
                                         # Save domain immediately
@@ -323,7 +323,8 @@ class RwDomainCrawler:
                             domain_data = {
                                 'domain': normalized_domain,
                                 'url': f"https://{domain}",
-                                'title': "Found via Certificate Transparency logs"
+                                'title': "Found via Certificate Transparency logs",
+                                'discovered_at': datetime.datetime.now().isoformat()
                             }
                             self.domain_data[normalized_domain] = domain_data
                             # Save domain immediately
@@ -388,7 +389,8 @@ class RwDomainCrawler:
                             domain_data = {
                                 'domain': normalized_domain,
                                 'url': f"https://{domain}",
-                                'title': "Found via subdomain enumeration"
+                                'title': "Found via subdomain enumeration",
+                                'discovered_at': datetime.datetime.now().isoformat()
                             }
                             self.domain_data[normalized_domain] = domain_data
                             # Save domain immediately

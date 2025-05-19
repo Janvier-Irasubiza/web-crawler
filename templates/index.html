@@ -655,7 +655,7 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c-1.657 0-3-4.03-3-9s1.343-9 3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
                   ></path>
                 </svg>
               </div>
@@ -727,94 +727,177 @@
           </div>
         </div>
 
-        <!-- Domain List -->
-        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-1 mb-8 space-y-4">
+          <!-- Discovered domains - spans 8 columns -->
           <div
-            class="flex justify-between items-center p-6 border-b border-gray-700"
+            class="md:col-span-8 bg-gray-800 rounded-lg shadow-lg overflow-hidden"
           >
-            <h3 class="text-lg font-medium text-white">
-              Discovered .rw Domains
-            </h3>
-            <div class="relative">
-              <div
-                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            <div
+              class="flex justify-between items-center p-6 border-b border-gray-700"
+            >
+              <h3 class="text-2xl font-medium">Discovered .rw Domains</h3>
+              <button
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hidden md:inline hover:bg-indigo-700"
+                id="scan-button"
+                onclick="reloadDomains()"
               >
                 <svg
-                  class="h-5 w-5 text-gray-400"
+                  class="w-5 h-5 inline-block mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
                 >
                   <path
-                    fill-rule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clip-rule="evenodd"
-                  />
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  ></path>
                 </svg>
+                <span class="hidden md:inline">Reload</span>
+              </button>
+              <button
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg md:hidden hover:bg-indigo-700"
+                id="scan-button-mobile"
+                onclick="reloadDomains()"
+              >
+                <svg
+                  class="w-5 h-5 inline-block mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  ></path>
+                </svg>
+                <span class="hidden md:inline">Reload</span>
+              </button>
+            </div>
+            <div class="p-6">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none w-1/2"
+                >
+                  <svg
+                    class="h-5 w-5 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="domain-search"
+                  placeholder="Search domains..."
+                  class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
+                />
               </div>
-              <input
-                type="text"
-                id="domain-search"
-                placeholder="Search domains..."
-                class="bg-gray-700 border border-gray-600 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
-              />
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-700">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                    >
+                      Domain
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                    >
+                      Discovered On
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+                    >
+                      Open
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="domain-list"
+                  class="bg-gray-800 divide-y divide-gray-700"
+                >
+                  <!-- Domain data will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="flex items-center justify-between p-4 border-t border-gray-700"
+            >
+              <div class="text-gray-400" id="pagination-info">
+                Showing <span class="font-medium text-white">1</span> to
+                <span class="font-medium text-white">10</span> of
+                <span class="font-medium text-white" id="total-domains">0</span>
+                domains
+              </div>
+              <div class="flex space-x-2" id="pagination-buttons">
+                <button
+                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+                >
+                  Previous
+                </button>
+                <button class="px-3 py-1 rounded bg-indigo-600 text-white">
+                  1
+                </button>
+                <button
+                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-              <thead class="bg-gray-700">
-                <tr>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                  >
-                    Domain
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                  >
-                    Last Scan
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                  >
-                    Open
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                id="domain-list"
-                class="bg-gray-800 divide-y divide-gray-700"
-              >
-                <!-- Domain data will be inserted here -->
-              </tbody>
-            </table>
-          </div>
+
+          <!-- Search engines - spans 4 columns -->
           <div
-            class="flex items-center justify-between p-4 border-t border-gray-700"
+            class="md:col-span-4 bg-gray-800 rounded-lg shadow-lg overflow-hidden h-fit"
           >
-            <div class="text-gray-400" id="pagination-info">
-              Showing <span class="font-medium text-white">1</span> to
-              <span class="font-medium text-white">10</span> of
-              <span class="font-medium text-white" id="total-domains">0</span>
-              domains
+            <div
+              class="flex justify-between items-center p-6 border-b border-gray-700"
+            >
+              <h3 class="text-2xl font-medium">Search Engines</h3>
             </div>
-            <div class="flex space-x-2" id="pagination-buttons">
-              <button
-                class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
-              >
-                Previous
-              </button>
-              <button class="px-3 py-1 rounded bg-indigo-600 text-white">
-                1
-              </button>
-              <button
-                class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
-              >
-                Next
-              </button>
+            <div class="overflow-x-auto">
+              <table class="min-w-full table-fixed divide-y divide-gray-700">
+                <thead class="bg-gray-700">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-1/2"
+                    >
+                      Search Engine
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-1/2"
+                    >
+                      Last Scan
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="search-engine-list"
+                  class="bg-gray-800 divide-y divide-gray-700"
+                >
+                  <!-- Search engine data will be inserted here -->
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1208,9 +1291,12 @@
                 ? domain
                 : domain.domain || domain.name || JSON.stringify(domain);
             const row = document.createElement("tr");
+            // Replace the existing date formatting in renderDomains function
             row.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap text-gray-300">${domainName}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-gray-300">${new Date().toLocaleString()}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(
+                domain.discovered_at || domain.discovered_on
+              )}</td>
               <td class="px-6 py-4 whitespace-nowrap text-indigo-400 hover:text-indigo-300 cursor-pointer">
                 <a href="${
                   domain.url || "#"
@@ -1445,178 +1531,187 @@
         renderDomains();
       }
 
-      // Function to fetch domains from API
-      async function fetchDomains() {
-        try {
-          const response = await fetch("/api/domains");
-          const data = await response.json();
+      // Function to format date and time in a human-readable format
+      function formatDateTime(dateString) {
+        if (!dateString) return "--";
 
-          if (data.error) {
-            console.error("API returned error:", data.error);
-            return { domains: [], last_updated: null };
+        try {
+          const date = new Date(dateString);
+
+          // Check if date is valid
+          if (isNaN(date.getTime())) return "Invalid Date";
+
+          // Get time difference in milliseconds
+          const now = new Date();
+          const diff = now - date;
+          const seconds = Math.floor(diff / 1000);
+          const minutes = Math.floor(seconds / 60);
+          const hours = Math.floor(minutes / 60);
+          const days = Math.floor(hours / 24);
+
+          // Return relative time if recent
+          if (days < 1) {
+            if (hours < 1) {
+              if (minutes < 1) {
+                return "Just now";
+              }
+              return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+            }
+            return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
           }
 
-          return data;
+          // For older dates, return formatted date
+          const options = {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          };
+
+          return date.toLocaleDateString("en-US", options);
         } catch (error) {
-          console.error("Error fetching domains:", error);
-          return { domains: [], last_updated: null };
+          console.error("Date formatting error:", error);
+          return "Invalid Date";
         }
       }
 
-      // Function to start polling
-      let lastUpdateTime = null;
+      // Replace the existing polling functions with this simplified version
       function startPolling() {
-        // Initial fetch
-        fetchDomains().then((data) => {
-          if (data.domains) {
-            updateDomainList(data);
-            lastUpdateTime = data.last_updated;
+        let isPolling = true;
+        let lastUpdateTime = null;
+
+        async function poll() {
+          if (!isPolling) return;
+
+          try {
+            const response = await fetch("/api/domains");
+            const data = await response.json();
+
+            if (data && data.last_updated !== lastUpdateTime) {
+              // Update domain list only if we have new data
+              const domains = data.domains || [];
+              const searchEngines = data.metadata?.search_engines || [];
+
+              // Update UI elements
+              document.getElementById("total-domains").textContent =
+                domains.length;
+              document.getElementById("found-domains").textContent =
+                domains.length;
+              document.getElementById("search-engines").textContent =
+                searchEngines.length;
+
+              // Update search engines table
+              const searchEngineTableBody = document.querySelector(
+                "#search-engine-list"
+              );
+              if (searchEngineTableBody) {
+                searchEngineTableBody.innerHTML = "";
+                searchEngines.forEach((engine) => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-300 capitalize">${engine}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-300">${new Date(
+                      data.last_updated
+                    ).toLocaleString()}</td>
+                  `;
+                  searchEngineTableBody.appendChild(row);
+                });
+              }
+
+              // Update scan duration
+              const duration = data.metadata?.crawl_duration || "0s";
+              updateScanDuration(duration);
+              const durationElement = document.getElementById("scan-duration");
+              if (durationElement) {
+                durationElement.textContent = formatDuration(
+                  parsePythonTimedelta(duration)
+                );
+              }
+
+              // Update domains table
+              sortedDomains = [...domains].reverse();
+              totalPages = Math.max(
+                1,
+                Math.ceil(sortedDomains.length / itemsPerPage)
+              );
+              if (currentPage > totalPages) currentPage = totalPages;
+              renderDomains();
+
+              // Update last update time
+              lastUpdateTime = data.last_updated;
+              document.getElementById("current-time").textContent = new Date(
+                data.last_updated
+              ).toLocaleString();
+            }
+
+            // Continue polling
+            setTimeout(poll, 2000);
+          } catch (error) {
+            console.error("Polling error:", error);
+            setTimeout(poll, 50000);
           }
-        });
+        }
 
-        // Set up polling every 5 seconds
-        setInterval(async () => {
-          const data = await fetchDomains();
-          if (data.last_updated !== lastUpdateTime) {
-            updateDomainList(data);
-            lastUpdateTime = data.last_updated;
-          }
-        }, 5000);
+        // Start polling
+        poll();
+
+        // Return function to stop polling
+        return () => {
+          isPolling = false;
+        };
       }
 
-      // Analytics data handling
-      async function fetchAnalytics(domain, dateRange) {
-        try {
-          const response = await fetch(
-            `/api/analytics?domain=${encodeURIComponent(domain)}&range=${dateRange}`
-          );
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          console.error("Error fetching analytics:", error);
-          return null;
-        }
-      }
+      // Initialize domain polling when page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        const stopPolling = startPolling();
 
-      function updateAnalyticsUI(data) {
-        // Update overview stats
-        document.getElementById("total-visitors").textContent =
-          data.totalVisitors || "0";
-        document.getElementById("avg-time").textContent =
-          formatTime(data.averageTime) || "0:00";
-        document.getElementById("top-region").textContent =
-          data.topRegion || "N/A";
-        document.getElementById("bounce-rate").textContent = `${
-          data.bounceRate || "0"
-        }%`;
-
-        // Update charts
-        updateCharts(data);
-        updateVisitorTable(data.visitors);
-      }
-
-      function formatTime(minutes) {
-        if (!minutes) return "0:00";
-        const hrs = Math.floor(minutes / 60);
-        const mins = Math.floor(minutes % 60);
-        return hrs > 0
-          ? `${hrs}:${mins.toString().padStart(2, "0")}`
-          : `${mins}:00`;
-      }
-
-      function updateCharts(data) {
-        // Update Region Chart
-        if (charts.region && data.regionData) {
-          charts.region.data.datasets[0].data = Object.values(data.regionData);
-          charts.region.data.labels = Object.keys(data.regionData);
-          charts.region.update();
-        }
-
-        // Update Time Chart
-        if (charts.time && data.timeData) {
-          charts.time.data.datasets[0].data = data.timeData.values;
-          charts.time.data.labels = data.timeData.labels;
-          charts.time.update();
-        }
-
-        // Update Traffic Chart
-        if (charts.traffic && data.trafficData) {
-          charts.traffic.data.datasets[0].data = data.trafficData.values;
-          charts.traffic.data.labels = data.trafficData.labels;
-          charts.traffic.update();
-        }
-
-        // Update Geo Chart
-        if (charts.geo && data.geoData) {
-          charts.geo.data.datasets[0].data = data.geoData;
-          charts.geo.update();
-        }
-      }
-
-      function updateVisitorTable(visitors) {
-        const tableBody = document.getElementById("visitor-data");
-        if (!tableBody || !visitors) return;
-
-        tableBody.innerHTML = "";
-        visitors.forEach((visitor) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.ip}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.location}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.region}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.timeSpent}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.pagesViewed}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${visitor.lastVisit}</td>
-          `;
-          tableBody.appendChild(row);
-        });
-      }
-
-      // Add event listener for the scan button
-      document.getElementById("scan-button").addEventListener("click", async () => {
-        const domain = document.getElementById("domain").value;
-        const dateRange = document.getElementById("date-range").value;
-
-        if (!domain) {
-          alert("Please enter a domain");
-          return;
-        }
-
-        // Show loading state
-        document.getElementById("scan-button").disabled = true;
-        document.getElementById("scan-button").innerHTML = `
-            <div class="flex items-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Analyzing...
-            </div>
-        `;
-
-        try {
-          const data = await fetchAnalytics(domain, dateRange);
-          if (data) {
-            // Show results container
-            document.getElementById("results-container").classList.remove("hidden");
-            updateAnalyticsUI(data);
-          }
-        } catch (error) {
-          console.error("Error during analysis:", error);
-          alert("An error occurred during analysis. Please try again.");
-        } finally {
-          // Reset button state
-          document.getElementById("scan-button").disabled = false;
-          document.getElementById("scan-button").innerHTML = `
-            <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                Start Website Analysis
-            </div>
-        `;
-        }
+        // Cleanup when leaving page
+        window.addEventListener("beforeunload", stopPolling);
       });
+
+      // Function to reload domains
+      function reloadDomains() {
+        // Animate reload icons
+        const reloadIcons = document.querySelectorAll(
+          "#scan-button svg, #scan-button-mobile svg"
+        );
+        reloadIcons.forEach((icon) => {
+          icon.style.transition = "transform 0.5s";
+          icon.style.transform = "rotate(360deg)";
+          setTimeout(() => {
+            icon.style.transform = "";
+          }, 50000);
+        });
+
+        // Refetch domains and update table, keep current page
+        fetch("/api/domains")
+          .then((res) => res.json())
+          .then((data) => {
+            updateDomainList(data);
+          })
+          .catch((err) => {
+            console.error("Reload error:", err);
+          });
+      }
+
+      // Search functionality
+      document
+        .getElementById("domain-search")
+        .addEventListener("input", function (event) {
+          const searchTerm = event.target.value.toLowerCase();
+          const domainTableBody = document.getElementById("domain-list");
+          const rows = domainTableBody.querySelectorAll("tr");
+
+          rows.forEach((row) => {
+            const domainName = row.cells[0].textContent.toLowerCase();
+            if (domainName.includes(searchTerm)) {
+              row.style.display = "";
+            } else {
+              row.style.display = "none";
+            }
+          });
+        });
     </script>
   </body>
 </html>
