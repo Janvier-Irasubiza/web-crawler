@@ -173,19 +173,33 @@
 
       <!-- Analytics Tab Content -->
       <div id="analytics-content" class="tab-content active space-y-12">
-        <div class="inline-flex flex-col items-start">
-          <div class="flex items-center space-x-2">
-            <span
-              class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 whitespace-nowrap"
-              >Juice Shop</span
-            >
-            <span class="mt-2 text-xl font-bold whitespace-nowrap text-gray-400"
-              >- Analytics</span
-            >
+        <div class="flex items-center justify-between">
+          <div class="inline-flex flex-col items-start">
+            <div class="flex items-center space-x-2">
+              <span
+                class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 whitespace-nowrap"
+                >Juice Shop</span
+              >
+              <span
+                class="mt-2 text-xl font-bold whitespace-nowrap text-gray-400"
+                >- Analytics</span
+              >
+            </div>
+            <p class="text-gray-400 block truncate text-center w-full">
+              http://13.60.183.62/
+            </p>
           </div>
-          <p class="text-gray-400 block truncate text-center w-full">
-            http://13.60.183.62/
-          </p>
+          <!-- TIme frame input filter -->
+          <div class="flex items-center space-x-4">
+            <select
+              id="time-frame"
+              class="bg-gray-800 border border-gray-700 text-gray-400 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5"
+            >
+              <option value="last-24-hours">Last 24 Hours</option>
+              <option value="last-week">Last Week</option>
+              <option value="last-month">Last Month</option>
+            </select>
+          </div>
         </div>
 
         <!-- Results Container (Initially Hidden) -->
@@ -1681,6 +1695,29 @@
           }
         }
       }
+
+      // time frame filtering
+      document
+        .getElementById("time-frame-filter")
+        .addEventListener("change", function (event) {
+          const selectedTimeFrame = event.target.value;
+          // Fetch and update analytics data based on the selected time frame
+          fetchAnalyticsData(selectedTimeFrame);
+        });
+
+      // visitors table pagination
+      document
+        .getElementById("pagination-buttons")
+        .addEventListener("click", function (event) {
+          const target = event.target;
+          if (target.tagName === "BUTTON") {
+            const page = parseInt(target.textContent);
+            if (!isNaN(page)) {
+              currentPage = page;
+              renderDomains();
+            }
+          }
+        });
 
       // Add this to your DOMContentLoaded event listener
       document.addEventListener("DOMContentLoaded", () => {
