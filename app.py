@@ -287,14 +287,14 @@ async def get_analytics_summary() -> dict[str, Any]:
 async def get_geolocation(request: Request):
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get("https://ipapi.co/json/")
+            response = await client.get("https://ipwho.is/")
             response.raise_for_status()
             data = response.json()
         return data
     except Exception as e:
         logger.error(f"Geolocation lookup failed: {e}")
         return {
-            "country_name": "Unknown",
+            "country": "Unknown",
             "region": "Unknown",
             "city": "Unknown"
         }
