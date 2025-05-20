@@ -1351,6 +1351,25 @@
         }
       }
 
+      // Function to render search engines
+      function renderSearchEngines(searchEngines) {
+        const searchEngineTableBody = document.getElementById("search-engine-list");
+        if (!searchEngineTableBody) return;
+
+        // Clear existing rows
+        searchEngineTableBody.innerHTML = "";
+
+        // Add new rows
+        searchEngines.forEach((engine) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${engine}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(new Date())}</td>
+          `;
+          searchEngineTableBody.appendChild(row);
+        });
+      }
+
       // Function to update domain list
       function updateDomainList(data) {
         const totalDomainsSpan = document.getElementById("total-domains");
@@ -1372,6 +1391,11 @@
         const metadata = data.metadata || {};
         if (searchEnginesSpan) {
           searchEnginesSpan.textContent = metadata.search_engines?.length || 0;
+        }
+
+        // Render search engines data
+        if (metadata.search_engines) {
+          renderSearchEngines(metadata.search_engines);
         }
 
         // Update scan duration with proper formatting
