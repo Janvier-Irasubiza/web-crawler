@@ -24,7 +24,7 @@ app = FastAPI(title="Web Crawler", description="WebCrawler that returns number o
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://13.60.183.62"],  # Allows all origins
+    allow_origins=["http://13.60.183.62"],  # Specify the exact origin
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -327,12 +327,13 @@ async def start_crawler_endpoint():
         raise HTTPException(status_code=500, detail="Failed to start crawler")
 
 @app.get("/api/analytics-script")
-async def get_analytics_script():
+async def get_analytics_script(request: Request):
     script_path = "scripts/analytics.js"
     if not os.path.exists(script_path):
         raise HTTPException(status_code=404, detail="Analytics script not found")
 
     response = FileResponse(script_path, media_type="application/javascript")
+    # Set the specific origin instead of wildcard when credentials are used
     response.headers["Access-Control-Allow-Origin"] = "http://13.60.183.62"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
