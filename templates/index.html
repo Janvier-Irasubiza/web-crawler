@@ -1511,27 +1511,66 @@
         }
       }
 
-      // Update the document ready event listener
-      document.addEventListener("DOMContentLoaded", () => {
-        // Fetch initial analytics data
-        fetchAnalyticsData(1, 10);
+      // Add this function to update all charts with analytics data
+      function updateCharts(analytics) {
+        // Update region chart
+        if (charts.region) {
+          const regionData = analytics.reduce((acc, curr) => {
+            const region = curr.region?.region || 'Unknown';
+            acc[region] = (acc[region] || 0) + 1;
+            return acc;
+          }, {});
 
-        // Poll for updates every 30 seconds
-        const analyticsPollingInterval = setInterval(() => fetchAnalyticsData(1, 10), 30000);
+          charts.region.data.labels = Object.keys(regionData);
+          charts.region.data.datasets[0].data = Object.values(regionData);
+          charts.region.update();
+        }
 
-        // Initialize charts with empty data
-        Object.keys(chartConfigs).forEach((key) => {
-          const canvas = document.getElementById(`${key}-chart`);
-          if (canvas) {
-            charts[key] = new Chart(canvas, chartConfigs[key]);
-          }
-        });
+        // Update time chart
+        if (charts.time) {
+          const timeData = analytics
+            .filter(event => event.event_type === 'heartbeat')
+            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          clearInterval(analyticsPollingInterval);
-        });
-      });
+          charts.time.data.labels = timeData.map(event => 
+            new Date(event.timestamp).toLocaleTimeString()
+          );
+          charts.time.data.datasets[0].data = timeData.map(event => event.time_spent);
+          charts.time.update();
+        }
+
+        // Update traffic chart
+        if (charts.traffic) {
+          const hourlyData = Array(24).fill(0);
+          analytics.forEach(event => {
+            const hour = new Date(event.timestamp).getHours();
+            hourlyData[hour]++;
+          });
+
+          charts.traffic.data.datasets[0].data = hourlyData;
+          charts.traffic.update();
+        }
+
+        // Update geo chart
+        if (charts.geo) {
+          const geoData = analytics.reduce((acc, curr) => {
+            const key = `${curr.region?.city}, ${curr.region?.country}`;
+            if (!acc[key]) {
+              acc[key] = {
+                x: 0, // You might want to add actual coordinates
+                y: 0,
+                r: 0,
+                location: key
+              };
+            }
+            acc[key].r++;
+            return acc;
+          }, {});
+
+          charts.geo.data.datasets[0].data = Object.values(geoData);
+          charts.geo.update();
+        }
+      }
 
       // Update the updateAnalyticsDashboard function to handle the actual data structure
       function updateAnalyticsDashboard(data) {
