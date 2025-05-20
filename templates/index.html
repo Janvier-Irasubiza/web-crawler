@@ -1446,8 +1446,14 @@
         console.log('Fetching analytics data...'); // Debug log
         try {
           // Show loading state
-          document.getElementById('results-container').classList.add('opacity-50');
+          const resultsContainer = document.getElementById('results-container');
+          if (resultsContainer) {
+            resultsContainer.classList.add('opacity-50');
+          } else {
+            console.error('Results container not found');
+          }
           
+          console.log('Making fetch request to:', `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`);
           const response = await fetch(`http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`);
           console.log('Response received:', response); // Debug log
           
@@ -1461,6 +1467,7 @@
           if (data.success) {
             // Store all analytics data
             const analytics = data.results;
+            console.log('Processing analytics data:', analytics);
             
             // Group analytics by session to show latest event for each visitor
             const latestSessionEvents = Object.values(
@@ -1475,15 +1482,18 @@
                 return acc;
               }, {})
             );
+            console.log('Latest session events:', latestSessionEvents);
 
             // Sort by timestamp descending (most recent first)
             sortedVisitorEvents = latestSessionEvents.sort(
               (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
             );
+            console.log('Sorted visitor events:', sortedVisitorEvents);
 
             // Update pagination info
             totalVisitorPages = data.total_pages;
             visitorCurrentPage = data.current_page;
+            console.log('Pagination updated:', { totalVisitorPages, visitorCurrentPage });
 
             // Update the dashboard with all data
             updateAnalyticsDashboard(data);
@@ -1496,21 +1506,46 @@
           } else {
             console.error("Failed to fetch analytics data:", data);
             // Show error state in UI
-            document.getElementById('total-visitors').textContent = 'Error';
-            document.getElementById('avg-time').textContent = 'Error';
-            document.getElementById('top-region').textContent = 'Error';
-            document.getElementById('bounce-rate').textContent = 'Error';
+            const elements = {
+              'total-visitors': 'Error',
+              'avg-time': 'Error',
+              'top-region': 'Error',
+              'bounce-rate': 'Error'
+            };
+            
+            Object.entries(elements).forEach(([id, value]) => {
+              const element = document.getElementById(id);
+              if (element) {
+                element.textContent = value;
+              } else {
+                console.error(`Element with id ${id} not found`);
+              }
+            });
           }
         } catch (error) {
           console.error("Error fetching analytics:", error);
           // Show error state in UI
-          document.getElementById('total-visitors').textContent = 'Error';
-          document.getElementById('avg-time').textContent = 'Error';
-          document.getElementById('top-region').textContent = 'Error';
-          document.getElementById('bounce-rate').textContent = 'Error';
+          const elements = {
+            'total-visitors': 'Error',
+            'avg-time': 'Error',
+            'top-region': 'Error',
+            'bounce-rate': 'Error'
+          };
+          
+          Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.textContent = value;
+            } else {
+              console.error(`Element with id ${id} not found`);
+            }
+          });
         } finally {
           // Remove loading state
-          document.getElementById('results-container').classList.remove('opacity-50');
+          const resultsContainer = document.getElementById('results-container');
+          if (resultsContainer) {
+            resultsContainer.classList.remove('opacity-50');
+          }
         }
       }
 
@@ -1834,21 +1869,31 @@
         console.log('DOM Content Loaded'); // Debug log
         
         // Initialize charts with empty data
+        console.log('Initializing charts...');
         Object.keys(chartConfigs).forEach((key) => {
           const canvas = document.getElementById(`${key}-chart`);
           if (canvas) {
+            console.log(`Initializing chart: ${key}`);
             charts[key] = new Chart(canvas, chartConfigs[key]);
+          } else {
+            console.error(`Canvas for chart ${key} not found`);
           }
         });
 
         // Fetch initial analytics data
+        console.log('Fetching initial analytics data...');
         fetchAnalyticsData(1, 10);
 
         // Poll for updates every 30 seconds
-        const analyticsPollingInterval = setInterval(() => fetchAnalyticsData(1, 10), 30000);
+        console.log('Setting up polling interval...');
+        const analyticsPollingInterval = setInterval(() => {
+          console.log('Polling for updates...');
+          fetchAnalyticsData(1, 10);
+        }, 30000);
 
         // Cleanup on page unload
         window.addEventListener('beforeunload', () => {
+          console.log('Cleaning up...');
           clearInterval(analyticsPollingInterval);
         });
       });
