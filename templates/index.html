@@ -1749,6 +1749,7 @@
           prevButton.textContent = "Previous";
           prevButton.disabled = visitorCurrentPage === 1;
           prevButton.onclick = () => {
+            console.log('Clicked Previous');
             if (visitorCurrentPage > 1) {
               fetchAnalyticsData(visitorCurrentPage - 1, visitorItemsPerPage);
             }
@@ -1778,6 +1779,7 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
+              console.log('Clicked First Page');
               fetchAnalyticsData(1, visitorItemsPerPage);
             };
             paginationContainer.appendChild(firstPageButton);
@@ -1801,6 +1803,7 @@
             }`;
             pageButton.textContent = i;
             pageButton.onclick = () => {
+              console.log('Clicked page', i);
               fetchAnalyticsData(i, visitorItemsPerPage);
             };
             paginationContainer.appendChild(pageButton);
@@ -1821,6 +1824,7 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
+              console.log('Clicked Last Page');
               fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage);
             };
             paginationContainer.appendChild(lastPageButton);
@@ -1836,6 +1840,7 @@
           nextButton.textContent = "Next";
           nextButton.disabled = visitorCurrentPage === totalVisitorPages;
           nextButton.onclick = () => {
+            console.log('Clicked Next');
             if (visitorCurrentPage < totalVisitorPages) {
               fetchAnalyticsData(visitorCurrentPage + 1, visitorItemsPerPage);
             }
