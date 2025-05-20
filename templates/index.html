@@ -593,7 +593,7 @@
               <button
                 class="px-4 py-2 bg-indigo-600 text-white rounded-lg hidden md:inline hover:bg-indigo-700"
                 id="scan-button"
-                onclick="reloadDomains()"
+                onclick="fetchDomains()"
               >
                 <svg
                   class="w-5 h-5 inline-block mr-1"
@@ -614,7 +614,7 @@
               <button
                 class="px-4 py-2 bg-indigo-600 text-white rounded-lg md:hidden hover:bg-indigo-700"
                 id="scan-button-mobile"
-                onclick="reloadDomains()"
+                onclick="fetchDomains()"
               >
                 <svg
                   class="w-5 h-5 inline-block mr-1"
@@ -774,6 +774,12 @@
 
       // Track the current time frame filter
       let currentTimeFrame = "all";
+
+      // Add these variables at the top for domain pagination
+      let currentPage = 1;
+      const itemsPerPage = 10;
+      let totalPages = 1;
+      let sortedDomains = [];
 
       // Tab switching functionality
       document.querySelectorAll(".tab-button").forEach((button) => {
@@ -1379,7 +1385,7 @@
           1,
           Math.ceil(sortedDomains.length / itemsPerPage)
         );
-        if (currentPage > totalPages) currentPage = totalPages;
+        currentPage = 1;
         renderDomains();
       }
 
@@ -1850,7 +1856,7 @@
       }
 
       // Function to reload domains
-      function reloadDomains() {
+      function fetchDomains() {
         // Animate reload icons
         const reloadIcons = document.querySelectorAll(
           "#scan-button svg, #scan-button-mobile svg"
