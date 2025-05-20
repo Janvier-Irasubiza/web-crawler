@@ -1,52 +1,123 @@
 # WebCrawler Analytics Platform
 
-A web analytics and domain discovery platform for tracking website visitors and discovering .rw domains. Built as a cybersecurity project focusing on ethical web crawling.
+A professional web analytics and domain discovery platform that provides detailed insights into website visitors and discovers .rw domains across the internet. This project was developed as a cybersecurity assignment, focusing on ethical web crawling and analytics.
 
-## Features
+## 🚀 Features
 
-- Real-time visitor tracking and analytics
-- Geographic visitor distribution
+### Website Analytics
+- Real-time visitor tracking
+- Geographic distribution of visitors
+- Time spent analysis
+- Bounce rate monitoring
 - Page view statistics
-- Automated .rw domain discovery
 - Interactive data visualization
+- Time-based filtering (Today, Last Week, Last Month, All Time)
 
-## Tech Stack
+### Domain Discovery
+- Automated .rw domain discovery
+- Search engine integration
+- Domain metadata collection
+- Real-time domain scanning
+- Searchable domain database
 
-- Backend: FastAPI (Python)
-- Frontend: HTML, TailwindCSS, JavaScript
-- Database: SQLite
-- Visualization: Chart.js
+## 🛠️ Technology Stack
 
-## Quick Start
+- **Backend**: FastAPI (Python)
+- **Frontend**: HTML, TailwindCSS, JavaScript
+- **Data Visualization**: Chart.js
+- **Database**: SQLite
+- **Web Crawling**: Custom crawler with Selenium
+- **Analytics**: Custom analytics engine
 
-1. Clone and setup:
+## 📋 Prerequisites
+
+- Python 3.8+
+- Node.js (for development)
+- Modern web browser
+- Internet connection
+
+## 🚀 Installation
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/web-crawler.git
 cd web-crawler
+```
+
+2. Create and activate a virtual environment:
+```bash
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
 ```
 
-2. Run the app:
+4. Start the application:
 ```bash
 python app.py
 ```
 
-Access at `http://localhost:8000`
+The application will be available at `http://localhost:8000`
 
-## Configuration
+## 🔧 Configuration
 
-Configure via environment variables:
-- `ANALYTICS_SERVER_URL`
-- `CRAWLER_INTERVAL`
-- `MAX_DOMAINS`
-- `DATABASE_URL`
+The application can be configured through environment variables:
 
-## Security & Ethics
+- `ANALYTICS_SERVER_URL`: URL of the analytics server
+- `CRAWLER_INTERVAL`: Interval between crawler runs (in seconds)
+- `MAX_DOMAINS`: Maximum number of domains to crawl
+- `DATABASE_URL`: SQLite database URL
 
-- Rate limiting and user agent rotation
-- Respects robots.txt
-- Implements request delays
+## 📊 Usage
+
+### Website Analytics
+1. Navigate to the Analytics tab
+2. View real-time visitor statistics
+3. Use time filters to analyze different periods
+4. Export data for further analysis
+
+### Domain Discovery
+1. Navigate to the Domain Discovery tab
+2. Click "Start Crawler" to begin domain discovery
+3. Use the search function to find specific domains
+4. View detailed domain information
+
+## 🔒 Security Considerations
+
+This project was developed with security best practices in mind:
+
+- Rate limiting to prevent server overload
+- User agent rotation for ethical crawling
+- IP-based request tracking
 - Secure data storage
-- No personal data collection
+- CORS protection
+- Input validation
+
+## 📝 Ethical Considerations
+
+The project adheres to ethical web crawling practices:
+
+- Respects robots.txt
+- Implements proper delays between requests
+- Only crawls publicly accessible content
+- Uses OWASP Juice Shop for testing analytics
+- Does not collect personal information
+- Implements proper error handling
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- OWASP Juice Shop for providing a safe testing environment
+- FastAPI for the excellent web framework
+- Chart.js for the visualization capabilities
+- TailwindCSS for the beautiful UI components
