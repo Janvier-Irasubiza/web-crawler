@@ -148,7 +148,8 @@ async def analytics(
 @app.get("/analytics/data")
 async def get_analytics(
     page: int = 1,
-    per_page: int = 10
+    per_page: int = 10,
+    time_frame: str = "all"
 ) -> dict[str, Any]:
     with get_db() as conn:
         cursor = conn.cursor()
@@ -177,6 +178,18 @@ async def get_analytics(
         '''
         
         params: list[str] = []
+        
+        # Add time frame filter
+        if time_frame != "all":
+            current_time = datetime.now()
+            if time_frame == "today":
+                query += " AND DATE(e.timestamp) = DATE('now')"
+            elif time_frame == "last_week":
+                query += " AND e.timestamp >= datetime('now', '-7 days')"
+            elif time_frame == "last_month":
+                query += " AND e.timestamp >= datetime('now', '-30 days')"
+            elif time_frame == "last_year":
+                query += " AND e.timestamp >= datetime('now', '-365 days')"
     
         # Get total count first
         count_query = f"SELECT COUNT(*) as total FROM ({query}) as subquery"
@@ -218,6 +231,7 @@ async def get_analytics(
                 "per_page": per_page,
                 "has_next": page < total_pages,
                 "has_previous": page > 1,
+                "time_frame": time_frame,
                 "results": events
             }
             

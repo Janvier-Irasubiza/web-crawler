@@ -193,9 +193,10 @@
               id="time-frame"
               class="bg-gray-800 border border-gray-700 text-gray-400 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5"
             >
-              <option value="last-24-hours">Last 24 Hours</option>
-              <option value="last-week">Last Week</option>
-              <option value="last-month">Last Month</option>
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="last_week">Last Week</option>
+              <option value="last_month">Last Month</option>
             </select>
           </div>
         </div>
@@ -843,6 +844,9 @@
       let totalVisitorPages = 1;
       let sortedVisitorEvents = [];
 
+      // Track the current time frame filter
+      let currentTimeFrame = 'all';
+
       // Tab switching functionality
       document.querySelectorAll(".tab-button").forEach((button) => {
         button.addEventListener("click", () => {
@@ -1451,8 +1455,8 @@
       };
 
       // Add this function to fetch analytics data
-      async function fetchAnalyticsData(page = 1, perPage = 10) {
-        console.log("Fetching analytics data..."); // Debug log
+      async function fetchAnalyticsData(page = 1, perPage = 10, timeFrame = 'all') {
+        console.log("Fetching analytics data...", { page, perPage, timeFrame }); // Debug log
         try {
           // Show loading state
           const resultsContainer = document.getElementById("results-container");
@@ -1462,13 +1466,12 @@
             console.error("Results container not found");
           }
 
-          console.log(
-            "Making fetch request to:",
-            `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`
-          );
-          const response = await fetch(
-            `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`
-          );
+          let url = `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`;
+          if (timeFrame && timeFrame !== 'all') {
+            url += `&time_frame=${encodeURIComponent(timeFrame)}`;
+          }
+          console.log("Making fetch request to:", url);
+          const response = await fetch(url);
           console.log("Response received:", response); // Debug log
 
           if (!response.ok) {
@@ -1767,7 +1770,7 @@
           prevButton.onclick = () => {
             console.log('Clicked Previous');
             if (visitorCurrentPage > 1) {
-              fetchAnalyticsData(visitorCurrentPage - 1, visitorItemsPerPage);
+              fetchAnalyticsData(visitorCurrentPage - 1, visitorItemsPerPage, currentTimeFrame);
             }
           };
           paginationContainer.appendChild(prevButton);
@@ -1797,7 +1800,7 @@
             firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
               console.log('Clicked First Page');
-              fetchAnalyticsData(1, visitorItemsPerPage);
+              fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(firstPageButton);
 
@@ -1821,7 +1824,7 @@
             pageButton.textContent = i;
             pageButton.onclick = () => {
               console.log('Clicked page', i);
-              fetchAnalyticsData(i, visitorItemsPerPage);
+              fetchAnalyticsData(i, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(pageButton);
           }
@@ -1842,7 +1845,7 @@
             lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
               console.log('Clicked Last Page');
-              fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage);
+              fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(lastPageButton);
           }
@@ -1859,7 +1862,7 @@
           nextButton.onclick = () => {
             console.log('Clicked Next');
             if (visitorCurrentPage < totalVisitorPages) {
-              fetchAnalyticsData(visitorCurrentPage + 1, visitorItemsPerPage);
+              fetchAnalyticsData(visitorCurrentPage + 1, visitorItemsPerPage, currentTimeFrame);
             }
           };
           paginationContainer.appendChild(nextButton);
@@ -1994,7 +1997,19 @@
         } catch (intervalError) {
           console.error("Error setting up polling interval:", intervalError);
         }
+
+        // On page load, use the default filter
+        fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
       });
+
+      // Listen for time frame filter changes
+      const timeFrameSelect = document.getElementById('time-frame');
+      if (timeFrameSelect) {
+        timeFrameSelect.addEventListener('change', function() {
+          currentTimeFrame = this.value;
+          fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
+        });
+      }
 
       // Immediate execution to verify script loading
       console.log("Script loaded and ready");
