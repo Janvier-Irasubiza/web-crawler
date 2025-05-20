@@ -17,8 +17,6 @@ async function getRegionInfo() {
             return { country: 'Unknown', region: 'Unknown', city: 'Unknown', ip: 'Unknown' };
         }
 
-        console.log('Geolocation data:', data);
-
         return {
             country: data.country || 'Unknown',
             region: data.region || 'Unknown',
@@ -50,8 +48,6 @@ class VisitorAnalytics {
     async init() {
         // Get region data
         this.regionInfo = await getRegionInfo();
-        console.log('Region info:', this.regionInfo);
-
 
         // Register event listeners
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
@@ -165,6 +161,3 @@ class VisitorAnalytics {
 
 // Initialize the analytics when the script is loaded
 const visitorAnalytics = new VisitorAnalytics();
-
-// For debugging
-console.log('Visitor analytics initialized with session ID:', visitorAnalytics.sessionId);
