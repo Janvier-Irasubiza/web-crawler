@@ -146,9 +146,15 @@ async def analytics(
 
 # Get analytics data endpoint
 @app.get("/analytics/data")
-async def get_analytics() -> dict[str, Any]:
+async def get_analytics(
+    page: int = 1,
+    per_page: int = 10
+) -> dict[str, Any]:
     with get_db() as conn:
         cursor = conn.cursor()
+        
+        # Calculate offset
+        offset = (page - 1) * per_page
         
         # Build the query dynamically based on provided filters
         query = '''
@@ -172,8 +178,14 @@ async def get_analytics() -> dict[str, Any]:
         
         params: list[str] = []
     
-        # Order by timestamp
-        query += " ORDER BY e.timestamp DESC"
+        # Get total count first
+        count_query = f"SELECT COUNT(*) as total FROM ({query}) as subquery"
+        cursor.execute(count_query, params)
+        total_count = cursor.fetchone()['total']
+        
+        # Add pagination
+        query += " ORDER BY e.timestamp DESC LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
         
         try:
             cursor.execute(query, params)
@@ -193,10 +205,19 @@ async def get_analytics() -> dict[str, Any]:
                 row_dict["region"] = region_data
                 events.append(row_dict)
             
-            # Return analytics data
+            # Calculate pagination metadata
+            total_pages = (total_count + per_page - 1) // per_page
+            
+            # Return analytics data with pagination info
             return {
                 "success": True,
                 "count": len(events),
+                "total_count": total_count,
+                "total_pages": total_pages,
+                "current_page": page,
+                "per_page": per_page,
+                "has_next": page < total_pages,
+                "has_previous": page > 1,
                 "results": events
             }
             
