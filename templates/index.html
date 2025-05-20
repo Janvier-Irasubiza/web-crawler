@@ -1441,6 +1441,11 @@
         renderDomains();
       }
 
+      // Add a global error handler at the top of the script
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error('Global JS Error:', {message, source, lineno, colno, error});
+      };
+
       // Add this function to fetch analytics data
       async function fetchAnalyticsData(page = 1, perPage = 10) {
         console.log("Fetching analytics data..."); // Debug log
@@ -1501,6 +1506,7 @@
 
             // Always render visitor data after fetch
             renderVisitorData();
+            console.log('Called renderVisitorData after fetch');
           } else {
             console.error("Failed to fetch analytics data:", data);
             // Show error state in UI
@@ -1544,6 +1550,7 @@
           if (resultsContainer) {
             resultsContainer.classList.remove("opacity-50");
           }
+          console.log('fetchAnalyticsData completed');
         }
       }
 
@@ -1617,6 +1624,7 @@
 
         // Render the current page of visitor data
         renderVisitorData();
+        console.log('Called renderVisitorData from updateAnalyticsDashboard');
       }
 
       // Add this function to update all charts with analytics data
@@ -1686,6 +1694,7 @@
 
       // Update the renderVisitorData function to handle pagination
       function renderVisitorData() {
+        console.log('renderVisitorData called');
         const visitorTableBody = document.getElementById("visitor-data");
         if (!visitorTableBody) return;
 
