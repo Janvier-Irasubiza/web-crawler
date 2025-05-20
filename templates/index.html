@@ -185,9 +185,7 @@
                 >- Analytics</span
               >
             </div>
-            <p class="text-gray-400 block truncate">
-              http://13.60.183.62/
-            </p>
+            <p class="text-gray-400 block truncate">http://13.60.183.62/</p>
           </div>
           <!-- TIme frame input filter -->
           <div class="flex items-center space-x-4">
@@ -1446,7 +1444,7 @@
       // Add this function to fetch analytics data
       async function fetchAnalyticsData() {
         try {
-          const response = await fetch("/analytics/data");
+          const response = await fetch("http://16.171.174.116/analytics/data");
           const data = await response.json();
 
           if (data.success) {

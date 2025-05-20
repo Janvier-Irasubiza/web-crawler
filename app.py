@@ -24,7 +24,7 @@ app = FastAPI(title="Web Crawler", description="WebCrawler that returns number o
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://13.60.183.62"],  # Specify the exact origin
+    allow_origins=["http://13.60.183.62", "http://16.171.174.116", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
