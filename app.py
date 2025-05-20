@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
@@ -19,7 +19,45 @@ import httpx
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Web Crawler", description="WebCrawler that returns number of viewers of a certain website, their region and time spent viewing. Also to return all .rw websites out there in the internet.")
+app = FastAPI(
+    title="Web Crawler",
+    description="""
+    A professional web analytics and domain discovery platform that provides detailed insights into website visitors 
+    and discovers .rw domains across the internet. This project was developed as a cybersecurity assignment, 
+    focusing on ethical web crawling and analytics.
+    
+    ## Key Features
+    
+    ### Website Analytics
+    - Real-time visitor tracking
+    - Geographic distribution of visitors
+    - Time spent analysis
+    - Bounce rate monitoring
+    - Page view statistics
+    - Interactive data visualization
+    - Time-based filtering
+    
+    ### Domain Discovery
+    - Automated .rw domain discovery
+    - Search engine integration
+    - Domain metadata collection
+    - Real-time domain scanning
+    - Searchable domain database
+    
+    ## Security & Ethical Considerations
+    
+    This project adheres to ethical web crawling practices:
+    - Respects robots.txt
+    - Implements proper delays between requests
+    - Only crawls publicly accessible content
+    - Uses OWASP Juice Shop for testing analytics
+    - Does not collect personal information
+    - Implements proper error handling
+    """,
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc"
+)
 
 # Add CORS middleware
 app.add_middleware(
@@ -71,7 +109,16 @@ async def read_root():
     except Exception as e:
         logger.error(f"Error serving index.html: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+@app.get("/documentation")
+async def read_documentation():
+    try:
+        logger.info("Serving documentation.html")
+        return FileResponse("templates/documentation.html", media_type="text/html")
+    except Exception as e:
+        logger.error(f"Error serving documentation.html: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Analytics endpoint
 @app.post("/analytics")
 async def analytics(
@@ -388,6 +435,141 @@ def cleanup():
 # Register cleanup handler
 signal.signal(signal.SIGINT, lambda s, f: cleanup())
 signal.signal(signal.SIGTERM, lambda s, f: cleanup())
+
+@app.get("/api/documentation")
+async def get_documentation():
+    """
+    Returns detailed API documentation including endpoints, request/response formats,
+    and example usage.
+    """
+    return JSONResponse({
+        "api_version": "1.0.0",
+        "documentation": {
+            "endpoints": {
+                "analytics": {
+                    "description": "Analytics data collection and retrieval endpoints",
+                    "endpoints": {
+                        "POST /analytics": {
+                            "description": "Submit analytics data for a visitor session",
+                            "request_body": {
+                                "sessionId": "string",
+                                "domain": "string",
+                                "eventType": "string",
+                                "timestamp": "string (ISO format)",
+                                "pageViews": "integer",
+                                "timeSpent": "integer (seconds)",
+                                "region": {
+                                    "city": "string",
+                                    "region": "string",
+                                    "country": "string",
+                                    "ip": "string"
+                                }
+                            },
+                            "response": {
+                                "success": "boolean",
+                                "event_id": "integer"
+                            }
+                        },
+                        "GET /analytics/data": {
+                            "description": "Retrieve paginated analytics data with optional time filtering",
+                            "query_parameters": {
+                                "page": "integer (default: 1)",
+                                "per_page": "integer (default: 10)",
+                                "time_frame": "string (all|today|last_week|last_month)"
+                            },
+                            "response": {
+                                "success": "boolean",
+                                "count": "integer",
+                                "total_count": "integer",
+                                "total_pages": "integer",
+                                "current_page": "integer",
+                                "per_page": "integer",
+                                "has_next": "boolean",
+                                "has_previous": "boolean",
+                                "time_frame": "string",
+                                "results": "array of analytics events"
+                            }
+                        },
+                        "GET /analytics/summary": {
+                            "description": "Get aggregated analytics summary",
+                            "response": {
+                                "success": "boolean",
+                                "total_visitors": "integer",
+                                "avg_time_spent": "integer",
+                                "top_regions": "array",
+                                "bounce_rate": "float"
+                            }
+                        }
+                    }
+                },
+                "domains": {
+                    "description": "Domain discovery and management endpoints",
+                    "endpoints": {
+                        "GET /api/domains": {
+                            "description": "Retrieve discovered .rw domains",
+                            "response": {
+                                "success": "boolean",
+                                "domains": "array of domain objects",
+                                "metadata": {
+                                    "total_domains": "integer",
+                                    "search_engines": "array",
+                                    "crawl_duration": "string"
+                                }
+                            }
+                        },
+                        "POST /api/start-crawler": {
+                            "description": "Start the domain crawler process",
+                            "response": {
+                                "success": "boolean",
+                                "message": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "data_models": {
+                "AnalyticsData": {
+                    "description": "Analytics event data model",
+                    "fields": {
+                        "sessionId": "string",
+                        "domain": "string",
+                        "eventType": "string",
+                        "timestamp": "string",
+                        "pageViews": "integer",
+                        "timeSpent": "integer",
+                        "region": {
+                            "city": "string",
+                            "region": "string",
+                            "country": "string",
+                            "ip": "string"
+                        }
+                    }
+                }
+            },
+            "error_responses": {
+                "400": "Bad Request - Invalid input parameters",
+                "404": "Not Found - Resource not found",
+                "500": "Internal Server Error - Server-side error"
+            }
+        },
+        "security": {
+            "authentication": "None required for public endpoints",
+            "rate_limiting": "Implemented to prevent abuse",
+            "cors": "Configured for specific origins"
+        },
+        "ethical_considerations": {
+            "crawling": {
+                "respects_robots_txt": true,
+                "implements_delays": true,
+                "user_agent_rotation": true
+            },
+            "data_collection": {
+                "personal_data": "Not collected",
+                "data_retention": "Limited to analytics purposes",
+                "data_sharing": "Not shared with third parties"
+            }
+        }
+    })
 
 if __name__ == "__main__":
     # Start the crawler when the server starts
