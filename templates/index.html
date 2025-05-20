@@ -531,7 +531,7 @@
                 <span class="font-medium text-white">10</span> of
                 <span class="font-medium text-white">--</span> results
               </div>
-              <div class="flex space-x-2">
+              <div class="flex space-x-2" id="visitor-pagination">
                 <button
                   class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
                 >
@@ -1750,9 +1750,7 @@
         }
 
         // Update pagination buttons
-        const paginationContainer = visitorTableBody
-          .closest(".bg-gray-800")
-          .querySelector(".flex.space-x-2");
+        const paginationContainer = document.getElementById('visitor-pagination');
         if (paginationContainer) {
           paginationContainer.innerHTML = "";
           console.log('[Pagination Buttons]', { visitorCurrentPage, totalVisitorPages });
@@ -1868,7 +1866,7 @@
         }
 
         // Log the pagination container and its contents for DOM inspection
-        const pagCont = visitorTableBody.closest('.bg-gray-800').querySelector('.flex.space-x-2');
+        const pagCont = document.getElementById('visitor-pagination');
         console.log('[Pagination Container]', pagCont, pagCont ? pagCont.innerHTML : 'No container');
       }
 
