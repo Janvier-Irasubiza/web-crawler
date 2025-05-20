@@ -543,11 +543,6 @@
                 <button
                   class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
                 >
-                  2
-                </button>
-                <button
-                  class="px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700"
-                >
                   Next
                 </button>
               </div>
@@ -1458,64 +1453,42 @@
       function updateAnalyticsDashboard(data) {
         const analytics = data.results;
 
-        // Get unique sessions
+        // Get unique sessions and calculate total visitors
         const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
+        document.getElementById("total-visitors").textContent = uniqueSessions.length;
 
-        // Update total visitors
-        document.getElementById("total-visitors").textContent =
-          uniqueSessions.length;
+        // Calculate average time spent more accurately
+        const sessionTimes = uniqueSessions.map(sessionId => {
+          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
+          return Math.max(...sessionEvents.map(e => e.time_spent));
+        });
+        const avgTimeSpent = sessionTimes.reduce((acc, curr) => acc + curr, 0) / uniqueSessions.length;
+        document.getElementById("avg-time").textContent = formatDuration(Math.round(avgTimeSpent));
 
-        // Calculate average time spent (use the most recent time_spent for each session)
-        const latestSessionTimes = analytics.reduce((acc, curr) => {
-          if (
-            !acc[curr.session_id] ||
-            acc[curr.session_id].timestamp < curr.timestamp
-          ) {
-            acc[curr.session_id] = curr;
-          }
-          return acc;
-        }, {});
-
-        const avgTimeSpent =
-          Object.values(latestSessionTimes).reduce(
-            (acc, curr) => acc + curr.time_spent,
-            0
-          ) / uniqueSessions.length;
-
-        document.getElementById("avg-time").textContent = formatDuration(
-          Math.round(avgTimeSpent)
-        );
-
-        // Get top region
+        // Calculate top region with percentage
         const regionCounts = analytics.reduce((acc, curr) => {
           const region = curr.region.region;
           acc[region] = (acc[region] || 0) + 1;
           return acc;
         }, {});
 
-        const topRegion = Object.entries(regionCounts).sort(
-          (a, b) => b[1] - a[1]
-        )[0];
-
+        const totalVisits = Object.values(regionCounts).reduce((acc, curr) => acc + curr, 0);
+        const topRegion = Object.entries(regionCounts).sort((a, b) => b[1] - a[1])[0];
+        const topRegionPercentage = ((topRegion[1] / totalVisits) * 100).toFixed(1);
+        
         document.getElementById("top-region").textContent = topRegion[0];
+        document.querySelector("#top-region").parentElement.querySelector(".text-gray-400").innerHTML = 
+          `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
 
-        // Calculate bounce rate (sessions with only 1 page view)
-        const bounceRate =
-          (uniqueSessions.filter((sessionId) => {
-            const sessionEvents = analytics.filter(
-              (a) => a.session_id === sessionId
-            );
-            return Math.max(...sessionEvents.map((e) => e.page_views)) === 1;
-          }).length /
-            uniqueSessions.length) *
-          100;
-
-        document.getElementById(
-          "bounce-rate"
-        ).textContent = `${bounceRate.toFixed(1)}%`;
+        // Calculate bounce rate more accurately
+        const bounceSessions = uniqueSessions.filter(sessionId => {
+          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
+          return sessionEvents.length === 1 && sessionEvents[0].page_views === 1;
+        });
+        const bounceRate = (bounceSessions.length / uniqueSessions.length) * 100;
+        document.getElementById("bounce-rate").textContent = `${bounceRate.toFixed(1)}%`;
 
         // Update all charts with real data
-
         // 1. Update Region Chart (Doughnut)
         if (charts.region) {
           const regionCounts = analytics.reduce((acc, curr) => {
