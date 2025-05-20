@@ -1350,6 +1350,10 @@
           };
           paginationContainer.appendChild(nextButton);
         }
+
+        // Log the pagination container and its contents for DOM inspection
+        const pagCont = domainTableBody.closest('.bg-gray-800').querySelector('.flex.space-x-2');
+        console.log('[Pagination Container]', pagCont, pagCont ? pagCont.innerHTML : 'No container');
       }
 
       // Function to format duration in a human-readable way
@@ -1862,6 +1866,10 @@
           };
           paginationContainer.appendChild(nextButton);
         }
+
+        // Log the pagination container and its contents for DOM inspection
+        const pagCont = visitorTableBody.closest('.bg-gray-800').querySelector('.flex.space-x-2');
+        console.log('[Pagination Container]', pagCont, pagCont ? pagCont.innerHTML : 'No container');
       }
 
       // Function to reload domains
