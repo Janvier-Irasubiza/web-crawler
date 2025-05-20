@@ -1725,6 +1725,7 @@
         if (paginationInfo) {
           const start = (visitorCurrentPage - 1) * visitorItemsPerPage + 1;
           const end = Math.min(start + pageEvents.length - 1, window.totalVisitorCount || 0);
+          console.log('[Pagination Info]', { start, end, visitorCurrentPage, totalVisitorPages, totalVisitorCount: window.totalVisitorCount, pageEventsLength: pageEvents.length });
           paginationInfo.innerHTML = `
             Showing <span class="font-medium text-white">${start}</span> to
             <span class="font-medium text-white">${end}</span> of
@@ -1738,6 +1739,7 @@
           .querySelector(".flex.space-x-2");
         if (paginationContainer) {
           paginationContainer.innerHTML = "";
+          console.log('[Pagination Buttons]', { visitorCurrentPage, totalVisitorPages });
 
           // Previous button
           const prevButton = document.createElement("button");
@@ -1766,6 +1768,7 @@
             totalVisitorPages,
             startPage + maxVisiblePages - 1
           );
+          console.log('[Page Range]', { startPage, endPage });
 
           // Adjust start page if we're near the end
           if (endPage - startPage + 1 < maxVisiblePages) {
