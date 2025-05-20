@@ -325,13 +325,17 @@ async def start_crawler_endpoint():
         return {"status": "success", "message": "Crawler started successfully"}
     else:
         raise HTTPException(status_code=500, detail="Failed to start crawler")
-    
+
 @app.get("/api/analytics-script")
 async def get_analytics_script():
     script_path = "scripts/analytics.js"
     if not os.path.exists(script_path):
         raise HTTPException(status_code=404, detail="Analytics script not found")
-    return FileResponse(script_path, media_type="application/javascript")
+
+    response = FileResponse(script_path, media_type="application/javascript")
+    response.headers["Access-Control-Allow-Origin"] = "http://13.60.183.62"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
 
 def cleanup():
     global crawler_process
