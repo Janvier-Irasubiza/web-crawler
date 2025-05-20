@@ -1839,7 +1839,7 @@
             const lastPageButton = document.createElement("button");
             lastPageButton.className =
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
-            lastPageButton.textContent = totalPages;
+            lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
               console.log('Clicked Last Page');
               fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage);
