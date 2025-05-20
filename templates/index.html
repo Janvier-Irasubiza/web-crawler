@@ -230,28 +230,6 @@
                   </svg>
                 </div>
               </div>
-              <div class="mt-2">
-                <div class="flex items-center">
-                  <span class="text-green-500 font-medium flex items-center">
-                    <svg
-                      class="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 10l7-7m0 0l7 7m-7-7v18"
-                      ></path>
-                    </svg>
-                    12.5%
-                  </span>
-                  <span class="text-gray-400 ml-2">from last period</span>
-                </div>
-              </div>
             </div>
 
             <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
@@ -277,28 +255,6 @@
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                </div>
-              </div>
-              <div class="mt-2">
-                <div class="flex items-center">
-                  <span class="text-green-500 font-medium flex items-center">
-                    <svg
-                      class="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 10l7-7m0 0l7 7m-7-7v18"
-                      ></path>
-                    </svg>
-                    8.1%
-                  </span>
-                  <span class="text-gray-400 ml-2">from last period</span>
                 </div>
               </div>
             </div>
@@ -328,12 +284,6 @@
                   </svg>
                 </div>
               </div>
-              <div class="mt-2">
-                <div class="text-gray-400 text-sm">
-                  <span class="font-medium text-white">67%</span> of total
-                  traffic
-                </div>
-              </div>
             </div>
 
             <div class="p-6 bg-gray-800 rounded-lg shadow-lg gradient-border">
@@ -359,28 +309,6 @@
                       d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
                     ></path>
                   </svg>
-                </div>
-              </div>
-              <div class="mt-2">
-                <div class="flex items-center">
-                  <span class="text-red-500 font-medium flex items-center">
-                    <svg
-                      class="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                      ></path>
-                    </svg>
-                    3.2%
-                  </span>
-                  <span class="text-gray-400 ml-2">from last period</span>
                 </div>
               </div>
             </div>
@@ -845,7 +773,7 @@
       let sortedVisitorEvents = [];
 
       // Track the current time frame filter
-      let currentTimeFrame = 'all';
+      let currentTimeFrame = "all";
 
       // Tab switching functionality
       document.querySelectorAll(".tab-button").forEach((button) => {
@@ -1356,8 +1284,14 @@
         }
 
         // Log the pagination container and its contents for DOM inspection
-        const pagCont = domainTableBody.closest('.bg-gray-800').querySelector('.flex.space-x-2');
-        console.log('[Pagination Container]', pagCont, pagCont ? pagCont.innerHTML : 'No container');
+        const pagCont = domainTableBody
+          .closest(".bg-gray-800")
+          .querySelector(".flex.space-x-2");
+        console.log(
+          "[Pagination Container]",
+          pagCont,
+          pagCont ? pagCont.innerHTML : "No container"
+        );
       }
 
       // Function to format duration in a human-readable way
@@ -1450,12 +1384,22 @@
       }
 
       // Add a global error handler at the top of the script
-      window.onerror = function(message, source, lineno, colno, error) {
-        console.error('Global JS Error:', {message, source, lineno, colno, error});
+      window.onerror = function (message, source, lineno, colno, error) {
+        console.error("Global JS Error:", {
+          message,
+          source,
+          lineno,
+          colno,
+          error,
+        });
       };
 
       // Add this function to fetch analytics data
-      async function fetchAnalyticsData(page = 1, perPage = 10, timeFrame = 'all') {
+      async function fetchAnalyticsData(
+        page = 1,
+        perPage = 10,
+        timeFrame = "all"
+      ) {
         console.log("Fetching analytics data...", { page, perPage, timeFrame }); // Debug log
         try {
           // Show loading state
@@ -1467,7 +1411,7 @@
           }
 
           let url = `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`;
-          if (timeFrame && timeFrame !== 'all') {
+          if (timeFrame && timeFrame !== "all") {
             url += `&time_frame=${encodeURIComponent(timeFrame)}`;
           }
           console.log("Making fetch request to:", url);
@@ -1499,12 +1443,12 @@
             console.log("Pagination updated:", {
               totalVisitorPages,
               visitorCurrentPage,
-              totalVisitorCount: window.totalVisitorCount
+              totalVisitorCount: window.totalVisitorCount,
             });
 
             // Update the dashboard with all data
             updateAnalyticsDashboard(data);
-            
+
             // Update last updated time with the most recent timestamp
             const mostRecentEvent = analytics[0];
             if (mostRecentEvent && mostRecentEvent.timestamp) {
@@ -1513,7 +1457,7 @@
 
             // Always render visitor data after fetch
             renderVisitorData();
-            console.log('Called renderVisitorData after fetch');
+            console.log("Called renderVisitorData after fetch");
           } else {
             console.error("Failed to fetch analytics data:", data);
             // Show error state in UI
@@ -1557,7 +1501,7 @@
           if (resultsContainer) {
             resultsContainer.classList.remove("opacity-50");
           }
-          console.log('fetchAnalyticsData completed');
+          console.log("fetchAnalyticsData completed");
         }
       }
 
@@ -1631,7 +1575,7 @@
 
         // Render the current page of visitor data
         renderVisitorData();
-        console.log('Called renderVisitorData from updateAnalyticsDashboard');
+        console.log("Called renderVisitorData from updateAnalyticsDashboard");
       }
 
       // Add this function to update all charts with analytics data
@@ -1701,7 +1645,7 @@
 
       // Update the renderVisitorData function to handle pagination
       function renderVisitorData() {
-        console.log('renderVisitorData called');
+        console.log("renderVisitorData called");
         const visitorTableBody = document.getElementById("visitor-data");
         if (!visitorTableBody) return;
 
@@ -1743,20 +1687,36 @@
           .querySelector(".text-gray-400");
         if (paginationInfo) {
           const start = (visitorCurrentPage - 1) * visitorItemsPerPage + 1;
-          const end = Math.min(start + pageEvents.length - 1, window.totalVisitorCount || 0);
-          console.log('[Pagination Info]', { start, end, visitorCurrentPage, totalVisitorPages, totalVisitorCount: window.totalVisitorCount, pageEventsLength: pageEvents.length });
+          const end = Math.min(
+            start + pageEvents.length - 1,
+            window.totalVisitorCount || 0
+          );
+          console.log("[Pagination Info]", {
+            start,
+            end,
+            visitorCurrentPage,
+            totalVisitorPages,
+            totalVisitorCount: window.totalVisitorCount,
+            pageEventsLength: pageEvents.length,
+          });
           paginationInfo.innerHTML = `
             Showing <span class="font-medium text-white">${start}</span> to
             <span class="font-medium text-white">${end}</span> of
-            <span class="font-medium text-white">${window.totalVisitorCount || '--'}</span> results
+            <span class="font-medium text-white">${
+              window.totalVisitorCount || "--"
+            }</span> results
           `;
         }
 
         // Update pagination buttons
-        const paginationContainer = document.getElementById('visitor-pagination');
+        const paginationContainer =
+          document.getElementById("visitor-pagination");
         if (paginationContainer) {
           paginationContainer.innerHTML = "";
-          console.log('[Pagination Buttons]', { visitorCurrentPage, totalVisitorPages });
+          console.log("[Pagination Buttons]", {
+            visitorCurrentPage,
+            totalVisitorPages,
+          });
 
           // Previous button
           const prevButton = document.createElement("button");
@@ -1768,9 +1728,13 @@
           prevButton.textContent = "Previous";
           prevButton.disabled = visitorCurrentPage === 1;
           prevButton.onclick = () => {
-            console.log('Clicked Previous');
+            console.log("Clicked Previous");
             if (visitorCurrentPage > 1) {
-              fetchAnalyticsData(visitorCurrentPage - 1, visitorItemsPerPage, currentTimeFrame);
+              fetchAnalyticsData(
+                visitorCurrentPage - 1,
+                visitorItemsPerPage,
+                currentTimeFrame
+              );
             }
           };
           paginationContainer.appendChild(prevButton);
@@ -1785,7 +1749,7 @@
             totalVisitorPages,
             startPage + maxVisiblePages - 1
           );
-          console.log('[Page Range]', { startPage, endPage });
+          console.log("[Page Range]", { startPage, endPage });
 
           // Adjust start page if we're near the end
           if (endPage - startPage + 1 < maxVisiblePages) {
@@ -1799,7 +1763,7 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
-              console.log('Clicked First Page');
+              console.log("Clicked First Page");
               fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(firstPageButton);
@@ -1823,7 +1787,7 @@
             }`;
             pageButton.textContent = i;
             pageButton.onclick = () => {
-              console.log('Clicked page', i);
+              console.log("Clicked page", i);
               fetchAnalyticsData(i, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(pageButton);
@@ -1844,8 +1808,12 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
-              console.log('Clicked Last Page');
-              fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage, currentTimeFrame);
+              console.log("Clicked Last Page");
+              fetchAnalyticsData(
+                totalVisitorPages,
+                visitorItemsPerPage,
+                currentTimeFrame
+              );
             };
             paginationContainer.appendChild(lastPageButton);
           }
@@ -1860,17 +1828,25 @@
           nextButton.textContent = "Next";
           nextButton.disabled = visitorCurrentPage === totalVisitorPages;
           nextButton.onclick = () => {
-            console.log('Clicked Next');
+            console.log("Clicked Next");
             if (visitorCurrentPage < totalVisitorPages) {
-              fetchAnalyticsData(visitorCurrentPage + 1, visitorItemsPerPage, currentTimeFrame);
+              fetchAnalyticsData(
+                visitorCurrentPage + 1,
+                visitorItemsPerPage,
+                currentTimeFrame
+              );
             }
           };
           paginationContainer.appendChild(nextButton);
         }
 
         // Log the pagination container and its contents for DOM inspection
-        const pagCont = document.getElementById('visitor-pagination');
-        console.log('[Pagination Container]', pagCont, pagCont ? pagCont.innerHTML : 'No container');
+        const pagCont = document.getElementById("visitor-pagination");
+        console.log(
+          "[Pagination Container]",
+          pagCont,
+          pagCont ? pagCont.innerHTML : "No container"
+        );
       }
 
       // Function to reload domains
@@ -2003,9 +1979,9 @@
       });
 
       // Listen for time frame filter changes
-      const timeFrameSelect = document.getElementById('time-frame');
+      const timeFrameSelect = document.getElementById("time-frame");
       if (timeFrameSelect) {
-        timeFrameSelect.addEventListener('change', function() {
+        timeFrameSelect.addEventListener("change", function () {
           currentTimeFrame = this.value;
           fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
         });
