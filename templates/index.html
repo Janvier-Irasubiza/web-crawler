@@ -1454,6 +1454,7 @@
           }
           
           const data = await response.json();
+          console.log('Analytics data received:', data); // Debug log
 
           if (data.success) {
             // Store all analytics data
@@ -1511,8 +1512,57 @@
         }
       }
 
+      // Update the updateAnalyticsDashboard function to handle the actual data structure
+      function updateAnalyticsDashboard(data) {
+        const analytics = data.results;
+        console.log('Updating dashboard with:', analytics); // Debug log
+
+        // Get unique sessions and calculate total visitors
+        const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
+        document.getElementById("total-visitors").textContent = data.total_count || uniqueSessions.length;
+
+        // Calculate average time spent more accurately
+        const sessionTimes = uniqueSessions.map(sessionId => {
+          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
+          return Math.max(...sessionEvents.map(e => e.time_spent || 0));
+        });
+        const avgTimeSpent = sessionTimes.reduce((acc, curr) => acc + curr, 0) / uniqueSessions.length;
+        document.getElementById("avg-time").textContent = formatDuration(Math.round(avgTimeSpent));
+
+        // Calculate top region with percentage
+        const regionCounts = analytics.reduce((acc, curr) => {
+          const region = curr.region?.region || 'Unknown';
+          acc[region] = (acc[region] || 0) + 1;
+          return acc;
+        }, {});
+
+        const totalVisits = Object.values(regionCounts).reduce((acc, curr) => acc + curr, 0);
+        const topRegion = Object.entries(regionCounts).sort((a, b) => b[1] - a[1])[0];
+        const topRegionPercentage = ((topRegion[1] / totalVisits) * 100).toFixed(1);
+        
+        document.getElementById("top-region").textContent = topRegion[0];
+        document.querySelector("#top-region").parentElement.querySelector(".text-gray-400").innerHTML = 
+          `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
+
+        // Calculate bounce rate more accurately
+        const bounceSessions = uniqueSessions.filter(sessionId => {
+          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
+          return sessionEvents.length === 1 && sessionEvents[0].page_views === 1;
+        });
+        const bounceRate = (bounceSessions.length / uniqueSessions.length) * 100;
+        document.getElementById("bounce-rate").textContent = `${bounceRate.toFixed(1)}%`;
+
+        // Update all charts with real data
+        updateCharts(analytics);
+
+        // Render the current page of visitor data
+        renderVisitorData();
+      }
+
       // Add this function to update all charts with analytics data
       function updateCharts(analytics) {
+        console.log('Updating charts with:', analytics); // Debug log
+
         // Update region chart
         if (charts.region) {
           const regionData = analytics.reduce((acc, curr) => {
@@ -1569,72 +1619,6 @@
 
           charts.geo.data.datasets[0].data = Object.values(geoData);
           charts.geo.update();
-        }
-      }
-
-      // Update the updateAnalyticsDashboard function to handle the actual data structure
-      function updateAnalyticsDashboard(data) {
-        const analytics = data.results;
-
-        // Get unique sessions and calculate total visitors
-        const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
-        document.getElementById("total-visitors").textContent = data.total_count || uniqueSessions.length;
-
-        // Calculate average time spent more accurately
-        const sessionTimes = uniqueSessions.map(sessionId => {
-          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
-          return Math.max(...sessionEvents.map(e => e.time_spent || 0));
-        });
-        const avgTimeSpent = sessionTimes.reduce((acc, curr) => acc + curr, 0) / uniqueSessions.length;
-        document.getElementById("avg-time").textContent = formatDuration(Math.round(avgTimeSpent));
-
-        // Calculate top region with percentage
-        const regionCounts = analytics.reduce((acc, curr) => {
-          const region = curr.region?.region || 'Unknown';
-          acc[region] = (acc[region] || 0) + 1;
-          return acc;
-        }, {});
-
-        const totalVisits = Object.values(regionCounts).reduce((acc, curr) => acc + curr, 0);
-        const topRegion = Object.entries(regionCounts).sort((a, b) => b[1] - a[1])[0];
-        const topRegionPercentage = ((topRegion[1] / totalVisits) * 100).toFixed(1);
-        
-        document.getElementById("top-region").textContent = topRegion[0];
-        document.querySelector("#top-region").parentElement.querySelector(".text-gray-400").innerHTML = 
-          `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
-
-        // Calculate bounce rate more accurately
-        const bounceSessions = uniqueSessions.filter(sessionId => {
-          const sessionEvents = analytics.filter(a => a.session_id === sessionId);
-          return sessionEvents.length === 1 && sessionEvents[0].page_views === 1;
-        });
-        const bounceRate = (bounceSessions.length / uniqueSessions.length) * 100;
-        document.getElementById("bounce-rate").textContent = `${bounceRate.toFixed(1)}%`;
-
-        // Update all charts with real data
-        updateCharts(analytics);
-
-        // Render the current page of visitor data
-        renderVisitorData();
-      }
-
-      // Add this function after other helper functions like formatDuration
-      function formatDateTime(timestamp) {
-        if (!timestamp) return "--";
-
-        try {
-          const date = new Date(timestamp);
-          return date.toLocaleString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          });
-        } catch (error) {
-          console.error("Error formatting date:", error);
-          return timestamp; // Return original value if parsing fails
         }
       }
 
@@ -1842,6 +1826,30 @@
             }
           });
         });
+
+      // Update the document ready event listener
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log('DOM Content Loaded'); // Debug log
+        
+        // Initialize charts with empty data
+        Object.keys(chartConfigs).forEach((key) => {
+          const canvas = document.getElementById(`${key}-chart`);
+          if (canvas) {
+            charts[key] = new Chart(canvas, chartConfigs[key]);
+          }
+        });
+
+        // Fetch initial analytics data
+        fetchAnalyticsData(1, 10);
+
+        // Poll for updates every 30 seconds
+        const analyticsPollingInterval = setInterval(() => fetchAnalyticsData(1, 10), 30000);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          clearInterval(analyticsPollingInterval);
+        });
+      });
     </script>
   </body>
 </html>
