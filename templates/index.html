@@ -1443,12 +1443,12 @@
       }
 
       // Add this function to fetch analytics data
-      async function fetchAnalyticsData() {
+      async function fetchAnalyticsData(page = 1, perPage = 10) {
         try {
           // Show loading state
           document.getElementById('results-container').classList.add('opacity-50');
           
-          const response = await fetch("/analytics/data");
+          const response = await fetch(`http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -1478,15 +1478,19 @@
               (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
             );
 
-            // Calculate total pages
-            totalVisitorPages = Math.max(1, Math.ceil(sortedVisitorEvents.length / visitorItemsPerPage));
-            if (visitorCurrentPage > totalVisitorPages) visitorCurrentPage = 1;
+            // Update pagination info
+            totalVisitorPages = data.total_pages;
+            visitorCurrentPage = data.current_page;
+            visitorItemsPerPage = data.per_page;
 
             // Update the dashboard with all data
             updateAnalyticsDashboard(data);
             
-            // Update last updated time
-            updateCurrentTime(data.last_updated || new Date());
+            // Update last updated time with the most recent timestamp
+            const mostRecentEvent = analytics[0];
+            if (mostRecentEvent && mostRecentEvent.timestamp) {
+              updateCurrentTime(mostRecentEvent.timestamp);
+            }
           } else {
             console.error("Failed to fetch analytics data:", data);
             // Show error state in UI
@@ -1511,10 +1515,10 @@
       // Update the document ready event listener
       document.addEventListener("DOMContentLoaded", () => {
         // Fetch initial analytics data
-        fetchAnalyticsData();
+        fetchAnalyticsData(1, 10);
 
         // Poll for updates every 30 seconds
-        const analyticsPollingInterval = setInterval(fetchAnalyticsData, 30000);
+        const analyticsPollingInterval = setInterval(() => fetchAnalyticsData(1, 10), 30000);
 
         // Initialize charts with empty data
         Object.keys(chartConfigs).forEach((key) => {
@@ -1530,25 +1534,25 @@
         });
       });
 
-      // Update the updateAnalyticsDashboard function to use the stored data
+      // Update the updateAnalyticsDashboard function to handle the actual data structure
       function updateAnalyticsDashboard(data) {
         const analytics = data.results;
 
         // Get unique sessions and calculate total visitors
         const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
-        document.getElementById("total-visitors").textContent = uniqueSessions.length;
+        document.getElementById("total-visitors").textContent = data.total_count || uniqueSessions.length;
 
         // Calculate average time spent more accurately
         const sessionTimes = uniqueSessions.map(sessionId => {
           const sessionEvents = analytics.filter(a => a.session_id === sessionId);
-          return Math.max(...sessionEvents.map(e => e.time_spent));
+          return Math.max(...sessionEvents.map(e => e.time_spent || 0));
         });
         const avgTimeSpent = sessionTimes.reduce((acc, curr) => acc + curr, 0) / uniqueSessions.length;
         document.getElementById("avg-time").textContent = formatDuration(Math.round(avgTimeSpent));
 
         // Calculate top region with percentage
         const regionCounts = analytics.reduce((acc, curr) => {
-          const region = curr.region.region;
+          const region = curr.region?.region || 'Unknown';
           acc[region] = (acc[region] || 0) + 1;
           return acc;
         }, {});
