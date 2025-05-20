@@ -1470,7 +1470,7 @@
           console.log("Analytics data received:", data); // Debug log
 
           if (data.success) {
-            // Store all analytics data
+            // Store all analytics data for the current page
             const analytics = data.results;
             console.log("Processing analytics data:", analytics);
 
@@ -1480,12 +1480,14 @@
             );
             console.log("Sorted visitor events:", sortedVisitorEvents);
 
-            // Update pagination info
+            // Update pagination info from backend
             totalVisitorPages = data.total_pages;
             visitorCurrentPage = data.current_page;
+            window.totalVisitorCount = data.total_count; // Store for pagination info
             console.log("Pagination updated:", {
               totalVisitorPages,
               visitorCurrentPage,
+              totalVisitorCount: window.totalVisitorCount
             });
 
             // Update the dashboard with all data
@@ -1687,10 +1689,8 @@
         // Clear existing rows
         visitorTableBody.innerHTML = "";
 
-        // Calculate start and end indices for current page
-        const start = (visitorCurrentPage - 1) * visitorItemsPerPage;
-        const end = start + visitorItemsPerPage;
-        const pageEvents = sortedVisitorEvents.slice(start, end);
+        // No need to calculate start/end, backend already paginates
+        const pageEvents = sortedVisitorEvents;
 
         // Add rows for current page
         pageEvents.forEach((event) => {
@@ -1723,15 +1723,12 @@
           .closest(".bg-gray-800")
           .querySelector(".text-gray-400");
         if (paginationInfo) {
+          const start = (visitorCurrentPage - 1) * visitorItemsPerPage + 1;
+          const end = Math.min(start + pageEvents.length - 1, window.totalVisitorCount || 0);
           paginationInfo.innerHTML = `
-            Showing <span class="font-medium text-white">${start + 1}</span> to
-            <span class="font-medium text-white">${Math.min(
-              end,
-              sortedVisitorEvents.length
-            )}</span> of
-            <span class="font-medium text-white">${
-              sortedVisitorEvents.length
-            }</span> results
+            Showing <span class="font-medium text-white">${start}</span> to
+            <span class="font-medium text-white">${end}</span> of
+            <span class="font-medium text-white">${window.totalVisitorCount || '--'}</span> results
           `;
         }
 
@@ -1753,8 +1750,7 @@
           prevButton.disabled = visitorCurrentPage === 1;
           prevButton.onclick = () => {
             if (visitorCurrentPage > 1) {
-              visitorCurrentPage--;
-              renderVisitorData();
+              fetchAnalyticsData(visitorCurrentPage - 1, visitorItemsPerPage);
             }
           };
           paginationContainer.appendChild(prevButton);
@@ -1782,8 +1778,7 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
-              visitorCurrentPage = 1;
-              renderVisitorData();
+              fetchAnalyticsData(1, visitorItemsPerPage);
             };
             paginationContainer.appendChild(firstPageButton);
 
@@ -1806,8 +1801,7 @@
             }`;
             pageButton.textContent = i;
             pageButton.onclick = () => {
-              visitorCurrentPage = i;
-              renderVisitorData();
+              fetchAnalyticsData(i, visitorItemsPerPage);
             };
             paginationContainer.appendChild(pageButton);
           }
@@ -1825,10 +1819,9 @@
             const lastPageButton = document.createElement("button");
             lastPageButton.className =
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
-            lastPageButton.textContent = totalPages;
+            lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
-              visitorCurrentPage = totalPages;
-              renderVisitorData();
+              fetchAnalyticsData(totalVisitorPages, visitorItemsPerPage);
             };
             paginationContainer.appendChild(lastPageButton);
           }
@@ -1844,8 +1837,7 @@
           nextButton.disabled = visitorCurrentPage === totalVisitorPages;
           nextButton.onclick = () => {
             if (visitorCurrentPage < totalVisitorPages) {
-              visitorCurrentPage++;
-              renderVisitorData();
+              fetchAnalyticsData(visitorCurrentPage + 1, visitorItemsPerPage);
             }
           };
           paginationContainer.appendChild(nextButton);
