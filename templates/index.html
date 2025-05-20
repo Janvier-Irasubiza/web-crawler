@@ -831,11 +831,11 @@
 
     <!-- JavaScript -->
     <script>
-      // Pagination variables
-      const itemsPerPage = 10;
-      let currentPage = 1;
-      let totalPages = 1;
-      let sortedDomains = [];
+      // Immediate logging to verify script execution
+      console.log('Script starting...');
+
+      // Initialize charts object
+      const charts = {};
 
       // Add these variables at the top with other pagination variables
       let visitorCurrentPage = 1;
@@ -1132,7 +1132,6 @@
       };
 
       // Initialize all charts
-      const charts = {};
       Object.keys(chartConfigs).forEach((key) => {
         const canvas = document.getElementById(`${key}-chart`);
         if (canvas) {
@@ -1444,11 +1443,14 @@
 
       // Add this function to fetch analytics data
       async function fetchAnalyticsData(page = 1, perPage = 10) {
+        console.log('Fetching analytics data...'); // Debug log
         try {
           // Show loading state
           document.getElementById('results-container').classList.add('opacity-50');
           
           const response = await fetch(`http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`);
+          console.log('Response received:', response); // Debug log
+          
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -1850,6 +1852,9 @@
           clearInterval(analyticsPollingInterval);
         });
       });
+
+      // Immediate execution to verify script loading
+      console.log('Script loaded and ready');
     </script>
   </body>
 </html>
