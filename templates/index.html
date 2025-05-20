@@ -1870,32 +1870,53 @@
         
         // Initialize charts with empty data
         console.log('Initializing charts...');
-        Object.keys(chartConfigs).forEach((key) => {
-          const canvas = document.getElementById(`${key}-chart`);
-          if (canvas) {
-            console.log(`Initializing chart: ${key}`);
-            charts[key] = new Chart(canvas, chartConfigs[key]);
-          } else {
-            console.error(`Canvas for chart ${key} not found`);
-          }
-        });
+        try {
+          Object.keys(chartConfigs).forEach((key) => {
+            try {
+              const canvas = document.getElementById(`${key}-chart`);
+              if (canvas) {
+                console.log(`Initializing chart: ${key}`);
+                charts[key] = new Chart(canvas, chartConfigs[key]);
+                console.log(`Successfully initialized chart: ${key}`);
+              } else {
+                console.warn(`Canvas for chart ${key} not found - skipping`);
+              }
+            } catch (chartError) {
+              console.error(`Error initializing chart ${key}:`, chartError);
+            }
+          });
+        } catch (initError) {
+          console.error('Error during chart initialization:', initError);
+        }
 
         // Fetch initial analytics data
         console.log('Fetching initial analytics data...');
-        fetchAnalyticsData(1, 10);
+        try {
+          fetchAnalyticsData(1, 10).catch(error => {
+            console.error('Error in initial analytics fetch:', error);
+          });
+        } catch (fetchError) {
+          console.error('Error setting up initial analytics fetch:', fetchError);
+        }
 
         // Poll for updates every 30 seconds
         console.log('Setting up polling interval...');
-        const analyticsPollingInterval = setInterval(() => {
-          console.log('Polling for updates...');
-          fetchAnalyticsData(1, 10);
-        }, 30000);
+        try {
+          const analyticsPollingInterval = setInterval(() => {
+            console.log('Polling for updates...');
+            fetchAnalyticsData(1, 10).catch(error => {
+              console.error('Error in polling fetch:', error);
+            });
+          }, 30000);
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          console.log('Cleaning up...');
-          clearInterval(analyticsPollingInterval);
-        });
+          // Cleanup on page unload
+          window.addEventListener('beforeunload', () => {
+            console.log('Cleaning up...');
+            clearInterval(analyticsPollingInterval);
+          });
+        } catch (intervalError) {
+          console.error('Error setting up polling interval:', intervalError);
+        }
       });
 
       // Immediate execution to verify script loading
