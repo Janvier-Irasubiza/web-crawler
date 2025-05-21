@@ -62,7 +62,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://13.60.183.62", "http://16.171.174.116", "http://localhost:8000"],
+    allow_origins=["http://13.60.183.62", "http://16.171.174.116", "http://localhost:8000", "http://13.60.183.62:8080"],
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -416,7 +416,7 @@ async def get_analytics_script(request: Request):
 
     response = FileResponse(script_path, media_type="application/javascript")
     # Set the specific origin instead of wildcard when credentials are used
-    response.headers["Access-Control-Allow-Origin"] = "http://13.60.183.62"
+    response.headers["Access-Control-Allow-Origin"] = "http://13.60.183.62:8080"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
 
