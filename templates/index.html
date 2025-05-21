@@ -734,7 +734,6 @@
 
     <!-- JavaScript -->
     <script>
-
       // Initialize charts object
       const charts = {};
 
@@ -1263,7 +1262,6 @@
 
         // Log the pagination container and its contents for DOM inspection
         const pagCont = document.getElementById("visitor-pagination");
-
       }
 
       // Function to format duration in a human-readable way
@@ -1318,7 +1316,8 @@
 
       // Function to render search engines
       function renderSearchEngines(searchEngines) {
-        const searchEngineTableBody = document.getElementById("search-engine-list");
+        const searchEngineTableBody =
+          document.getElementById("search-engine-list");
         if (!searchEngineTableBody) return;
 
         // Clear existing rows
@@ -1329,7 +1328,9 @@
           const row = document.createElement("tr");
           row.innerHTML = `
             <td class="px-6 py-4 whitespace-nowrap text-gray-300">${engine}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(new Date())}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-300">${formatDateTime(
+              new Date()
+            )}</td>
           `;
           searchEngineTableBody.appendChild(row);
         });
@@ -1492,15 +1493,19 @@
         try {
           const analytics = data.results;
           if (!analytics || !Array.isArray(analytics)) {
-            console.error('Invalid analytics data:', data);
+            console.error("Invalid analytics data:", data);
             return;
           }
 
           // Get unique sessions and calculate total visitors
-          const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
-          const totalVisitorsElement = document.getElementById("total-visitors");
+          const uniqueSessions = [
+            ...new Set(analytics.map((a) => a.session_id)),
+          ];
+          const totalVisitorsElement =
+            document.getElementById("total-visitors");
           if (totalVisitorsElement) {
-            totalVisitorsElement.textContent = data.total_count || uniqueSessions.length;
+            totalVisitorsElement.textContent =
+              data.total_count || uniqueSessions.length;
           }
 
           // Calculate average time spent more accurately
@@ -1545,7 +1550,8 @@
               topRegionElement.textContent = topRegion[0];
               const parentElement = topRegionElement.parentElement;
               if (parentElement) {
-                const textElement = parentElement.querySelector(".text-gray-400");
+                const textElement =
+                  parentElement.querySelector(".text-gray-400");
                 if (textElement) {
                   textElement.innerHTML = `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
                 }
@@ -1564,27 +1570,25 @@
           });
 
           // Update all charts with real data
-          if (typeof updateCharts === 'function') {
+          if (typeof updateCharts === "function") {
             updateCharts(analytics);
           } else {
-            console.error('updateCharts function is not defined');
+            console.error("updateCharts function is not defined");
           }
 
           // Render the current page of visitor data
-          if (typeof renderVisitorData === 'function') {
+          if (typeof renderVisitorData === "function") {
             renderVisitorData();
           } else {
-            console.error('renderVisitorData function is not defined');
+            console.error("renderVisitorData function is not defined");
           }
         } catch (error) {
-          console.error('Error in updateAnalyticsDashboard:', error);
+          console.error("Error in updateAnalyticsDashboard:", error);
         }
       }
 
       // Add this function to update all charts with analytics data
       function updateCharts(analytics) {
-
-        
         // Update region chart
         if (charts.region) {
           const regionData = analytics.reduce((acc, curr) => {
@@ -1693,7 +1697,7 @@
             start + pageEvents.length - 1,
             window.totalVisitorCount || 0
           );
-          
+
           paginationInfo.innerHTML = `
             Showing <span class="font-medium text-white">${start}</span> to
             <span class="font-medium text-white">${end}</span> of
@@ -1827,7 +1831,6 @@
 
         // Log the pagination container and its contents for DOM inspection
         const pagCont = document.getElementById("visitor-pagination");
-
       }
 
       // Function to reload domains
@@ -1889,7 +1892,6 @@
 
       // Update the document ready event listener
       document.addEventListener("DOMContentLoaded", () => {
-
         // Initialize charts with empty data
         try {
           Object.keys(chartConfigs).forEach((key) => {
