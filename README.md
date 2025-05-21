@@ -1,5 +1,6 @@
 # WebCrawler Analytics Platform
 
+
 A professional web analytics and domain discovery platform that provides detailed insights into website visitors and discovers .rw domains across the internet. This project was developed as a cybersecurity assignment, focusing on ethical web crawling and analytics.
 
 ## 🚀 Features
