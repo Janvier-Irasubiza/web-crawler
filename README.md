@@ -47,7 +47,7 @@ A web analytics and domain discovery tool which provides detailed insights into 
    pip install -r requirements.txt
 
    # Start the target project
-   python app.py
+   python blog.py
    ```
 
 3. **Set up the analytics tool**
@@ -70,9 +70,9 @@ A web analytics and domain discovery tool which provides detailed insights into 
 1. **Start the target project (vuln-blog)**
    ```bash
    # In the vuln-blog directory
-   python app.py
+   python blog.py
    ```
-   The target project will be available at: http://localhost:5000
+   The target project will be available at: http://localhost:9000
 
 2. **Start the analytics tool**
    ```bash
@@ -81,7 +81,7 @@ A web analytics and domain discovery tool which provides detailed insights into 
    ```
 
 3. **Access the applications**
-   - Target Project: http://localhost:5000
+   - Target Project: http://localhost:9000
    - Analytics Dashboard: http://localhost:8000
    - API Documentation: http://localhost:8000/api/docs
    - ReDoc Documentation: http://localhost:8000/api/redoc
