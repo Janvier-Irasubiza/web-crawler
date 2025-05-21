@@ -9,10 +9,9 @@ A web analytics and domain discovery tool which provides detailed insights into 
 - **Security-First**: Implements ethical crawling practices including robots.txt compliance and proper request delays
 
 ## Tech Stack
-
-- FastAPI (Backend)
-- SQLite (Database)
-- HTML/CSS/JavaScript (Frontend)
+- BeautifulSoup4 (Web Scraping)
+- Requests (HTTP Client)
+- urllib (URL Parsing/Handling)
 
 ## Setup Guide
 
