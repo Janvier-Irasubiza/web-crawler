@@ -1,4 +1,4 @@
-# Web Crawler and Analytics Platform
+# Web Crawler
 
 A web analytics and domain discovery tool which provides detailed insights into website visitors and discovers .rw domains across the internet.
 
