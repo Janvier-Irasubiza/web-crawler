@@ -2,16 +2,9 @@
 
 A web analytics and domain discovery tool which provides detailed insights into website visitors and discovers .rw domains across the internet.
 
-## ⚠️ Security Disclaimer
+## ⚠️ Privacy Notice
 
-**IMPORTANT**: This project and its target application (vuln-blog) are designed for educational and testing purposes only. They contain intentionally vulnerable code and should **NEVER** be run in a production environment or on systems containing sensitive data.
-
-### Security Requirements:
-- Run these applications only in isolated virtual machines or containers
-- Use dedicated test environments with no access to production systems
-- Do not expose these applications to public networks
-- Do not use real credentials or sensitive data
-- Ensure proper network isolation between the applications and other systems
+This tool collects visitor data including IP addresses, geographic locations, and timestamps. For privacy and security reasons, please run this application in an isolated and controlled environment.
 
 ## Key Features
 
