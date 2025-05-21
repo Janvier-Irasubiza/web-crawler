@@ -354,10 +354,16 @@ class RwDomainCrawler:
             'login', 'auth', 'sso', 'accounts', 'alumni', 'library',
             'research', 'jobs', 'careers', 'hr', 'moodle', 'learn',
             'lms', 'sis', 'erp', 'crm', 'mail', 'smtp', 'imap', 'pop',
+            'services', 'vpn', 'remote', 'intranet', 'extranet', 'www', 'mail', 'webmail', 'api', 'dev', 'stage', 'test', 'demo',
+            'admin', 'shop', 'blog', 'portal', 'app', 'mobile', 'm', 
+            'support', 'help', 'forum', 'community', 'news', 'media',
+            'cloud', 'cdn', 'static', 'assets', 'images', 'files',
+            'login', 'auth', 'sso', 'accounts', 'alumni', 'library',
+            'research', 'jobs', 'careers', 'hr', 'moodle', 'learn',
+            'lms', 'sis', 'erp', 'crm', 'mail', 'smtp', 'imap', 'pop',
             'services', 'vpn', 'remote', 'intranet', 'extranet'
         ]
         
-        # Get the base domains we've already discovered
         base_domains = list(self.domain_data.keys())
         new_domains_to_test = []
         
@@ -393,7 +399,6 @@ class RwDomainCrawler:
                                 'discovered_at': datetime.datetime.now().isoformat()
                             }
                             self.domain_data[normalized_domain] = domain_data
-                            # Save domain immediately
                             self.save_single_domain(domain_data)
                 except Exception as e:
                     logging.error(f"Error testing domain {domain}: {str(e)}")

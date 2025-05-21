@@ -186,7 +186,7 @@
                 >- Analytics</span
               >
             </div>
-            <p class="text-gray-400 block truncate">http://13.60.183.62:8080/</p>
+            <p class="text-gray-400 block truncate">http://localhost:8080/</p>
           </div>
           <!-- TIme frame input filter -->
           <div class="flex items-center space-x-4">
@@ -1262,9 +1262,7 @@
         }
 
         // Log the pagination container and its contents for DOM inspection
-        const pagCont = domainTableBody
-          .closest(".bg-gray-800")
-          .querySelector(".flex.space-x-2");
+        const pagCont = document.getElementById("visitor-pagination");
 
       }
 
@@ -1407,10 +1405,11 @@
             console.error("Results container not found");
           }
 
-          let url = `http://16.171.174.116/analytics/data?page=${page}&per_page=${perPage}`;
+          let url = `/analytics/data?page=${page}&per_page=${perPage}`;
           if (timeFrame && timeFrame !== "all") {
             url += `&time_frame=${encodeURIComponent(timeFrame)}`;
           }
+
           const response = await fetch(url);
 
           if (!response.ok) {
@@ -1490,69 +1489,96 @@
 
       // Update the updateAnalyticsDashboard function to handle the actual data structure
       function updateAnalyticsDashboard(data) {
-        const analytics = data.results;
+        try {
+          const analytics = data.results;
+          if (!analytics || !Array.isArray(analytics)) {
+            console.error('Invalid analytics data:', data);
+            return;
+          }
 
-        // Get unique sessions and calculate total visitors
-        const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
-        document.getElementById("total-visitors").textContent =
-          data.total_count || uniqueSessions.length;
+          // Get unique sessions and calculate total visitors
+          const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
+          const totalVisitorsElement = document.getElementById("total-visitors");
+          if (totalVisitorsElement) {
+            totalVisitorsElement.textContent = data.total_count || uniqueSessions.length;
+          }
 
-        // Calculate average time spent more accurately
-        const sessionTimes = uniqueSessions.map((sessionId) => {
-          const sessionEvents = analytics.filter(
-            (a) => a.session_id === sessionId
+          // Calculate average time spent more accurately
+          const sessionTimes = uniqueSessions.map((sessionId) => {
+            const sessionEvents = analytics.filter(
+              (a) => a.session_id === sessionId
+            );
+            return Math.max(...sessionEvents.map((e) => e.time_spent || 0));
+          });
+          const avgTimeSpent =
+            sessionTimes.reduce((acc, curr) => acc + curr, 0) /
+            uniqueSessions.length;
+          const avgTimeElement = document.getElementById("avg-time");
+          if (avgTimeElement) {
+            avgTimeElement.textContent = formatDuration(
+              Math.round(avgTimeSpent)
+            );
+          }
+
+          // Calculate top region with percentage
+          const regionCounts = analytics.reduce((acc, curr) => {
+            const region = curr.region?.region || "Unknown";
+            acc[region] = (acc[region] || 0) + 1;
+            return acc;
+          }, {});
+
+          const totalVisits = Object.values(regionCounts).reduce(
+            (acc, curr) => acc + curr,
+            0
           );
-          return Math.max(...sessionEvents.map((e) => e.time_spent || 0));
-        });
-        const avgTimeSpent =
-          sessionTimes.reduce((acc, curr) => acc + curr, 0) /
-          uniqueSessions.length;
-        document.getElementById("avg-time").textContent = formatDuration(
-          Math.round(avgTimeSpent)
-        );
+          const topRegion = Object.entries(regionCounts).sort(
+            (a, b) => b[1] - a[1]
+          )[0];
+          if (topRegion) {
+            const topRegionPercentage = (
+              (topRegion[1] / totalVisits) *
+              100
+            ).toFixed(1);
 
-        // Calculate top region with percentage
-        const regionCounts = analytics.reduce((acc, curr) => {
-          const region = curr.region?.region || "Unknown";
-          acc[region] = (acc[region] || 0) + 1;
-          return acc;
-        }, {});
+            const topRegionElement = document.getElementById("top-region");
+            if (topRegionElement) {
+              topRegionElement.textContent = topRegion[0];
+              const parentElement = topRegionElement.parentElement;
+              if (parentElement) {
+                const textElement = parentElement.querySelector(".text-gray-400");
+                if (textElement) {
+                  textElement.innerHTML = `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
+                }
+              }
+            }
+          }
 
-        const totalVisits = Object.values(regionCounts).reduce(
-          (acc, curr) => acc + curr,
-          0
-        );
-        const topRegion = Object.entries(regionCounts).sort(
-          (a, b) => b[1] - a[1]
-        )[0];
-        const topRegionPercentage = (
-          (topRegion[1] / totalVisits) *
-          100
-        ).toFixed(1);
+          // Calculate bounce rate more accurately
+          const bounceSessions = uniqueSessions.filter((sessionId) => {
+            const sessionEvents = analytics.filter(
+              (a) => a.session_id === sessionId
+            );
+            return (
+              sessionEvents.length === 1 && sessionEvents[0].page_views === 1
+            );
+          });
 
-        document.getElementById("top-region").textContent = topRegion[0];
-        document
-          .querySelector("#top-region")
-          .parentElement.querySelector(
-            ".text-gray-400"
-          ).innerHTML = `<span class="font-medium text-white">${topRegionPercentage}%</span> of total traffic`;
+          // Update all charts with real data
+          if (typeof updateCharts === 'function') {
+            updateCharts(analytics);
+          } else {
+            console.error('updateCharts function is not defined');
+          }
 
-        // Calculate bounce rate more accurately
-        const bounceSessions = uniqueSessions.filter((sessionId) => {
-          const sessionEvents = analytics.filter(
-            (a) => a.session_id === sessionId
-          );
-          return (
-            sessionEvents.length === 1 && sessionEvents[0].page_views === 1
-          );
-        });
-
-        // Update all charts with real data
-        updateCharts(analytics);
-
-        // Render the current page of visitor data
-        renderVisitorData();
-
+          // Render the current page of visitor data
+          if (typeof renderVisitorData === 'function') {
+            renderVisitorData();
+          } else {
+            console.error('renderVisitorData function is not defined');
+          }
+        } catch (error) {
+          console.error('Error in updateAnalyticsDashboard:', error);
+        }
       }
 
       // Add this function to update all charts with analytics data

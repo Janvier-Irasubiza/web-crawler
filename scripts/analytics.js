@@ -39,7 +39,7 @@ class VisitorAnalytics {
         this.regionInfo = null;
         this.active = true;
         this.activityTimeout = null;
-        this.serverEndpoint = 'http://16.171.174.116/analytics';
+        this.serverEndpoint = 'http://localhost:8000/analytics';
 
         // Initialize
         this.init();
