@@ -1,6 +1,6 @@
 # Web Crawler and Analytics Platform
 
-A web analytics and domain discovery tool built with FastAPI. It provides detailed insights into website visitors and discovers .rw domains across the internet.
+A web analytics and domain discovery tool which provides detailed insights into website visitors and discovers .rw domains across the internet.
 
 ## Key Features
 
