@@ -1469,7 +1469,6 @@
               "total-visitors": "Error",
               "avg-time": "Error",
               "top-region": "Error",
-              "bounce-rate": "Error",
             };
 
             Object.entries(elements).forEach(([id, value]) => {
@@ -1488,7 +1487,6 @@
             "total-visitors": "Error",
             "avg-time": "Error",
             "top-region": "Error",
-            "bounce-rate": "Error",
           };
 
           Object.entries(elements).forEach(([id, value]) => {
@@ -1568,11 +1566,6 @@
             sessionEvents.length === 1 && sessionEvents[0].page_views === 1
           );
         });
-        const bounceRate =
-          (bounceSessions.length / uniqueSessions.length) * 100;
-        document.getElementById(
-          "bounce-rate"
-        ).textContent = `${bounceRate.toFixed(1)}%`;
 
         // Update all charts with real data
         updateCharts(analytics);
