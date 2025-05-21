@@ -734,8 +734,6 @@
 
     <!-- JavaScript -->
     <script>
-      // Immediate logging to verify script execution
-      console.log("Script starting...");
 
       // Initialize charts object
       const charts = {};
@@ -1267,11 +1265,7 @@
         const pagCont = domainTableBody
           .closest(".bg-gray-800")
           .querySelector(".flex.space-x-2");
-        console.log(
-          "[Pagination Container]",
-          pagCont,
-          pagCont ? pagCont.innerHTML : "No container"
-        );
+
       }
 
       // Function to format duration in a human-readable way
@@ -1404,7 +1398,6 @@
         perPage = 10,
         timeFrame = "all"
       ) {
-        console.log("Fetching analytics data...", { page, perPage, timeFrame }); // Debug log
         try {
           // Show loading state
           const resultsContainer = document.getElementById("results-container");
@@ -1418,37 +1411,27 @@
           if (timeFrame && timeFrame !== "all") {
             url += `&time_frame=${encodeURIComponent(timeFrame)}`;
           }
-          console.log("Making fetch request to:", url);
           const response = await fetch(url);
-          console.log("Response received:", response); // Debug log
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
           const data = await response.json();
-          console.log("Analytics data received:", data); // Debug log
 
           if (data.success) {
             // Store all analytics data for the current page
             const analytics = data.results;
-            console.log("Processing analytics data:", analytics);
 
             // Sort all analytics events by timestamp descending (most recent first)
             sortedVisitorEvents = analytics.sort(
               (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
             );
-            console.log("Sorted visitor events:", sortedVisitorEvents);
 
             // Update pagination info from backend
             totalVisitorPages = data.total_pages;
             visitorCurrentPage = data.current_page;
             window.totalVisitorCount = data.total_count; // Store for pagination info
-            console.log("Pagination updated:", {
-              totalVisitorPages,
-              visitorCurrentPage,
-              totalVisitorCount: window.totalVisitorCount,
-            });
 
             // Update the dashboard with all data
             updateAnalyticsDashboard(data);
@@ -1461,7 +1444,6 @@
 
             // Always render visitor data after fetch
             renderVisitorData();
-            console.log("Called renderVisitorData after fetch");
           } else {
             console.error("Failed to fetch analytics data:", data);
             // Show error state in UI
@@ -1503,14 +1485,12 @@
           if (resultsContainer) {
             resultsContainer.classList.remove("opacity-50");
           }
-          console.log("fetchAnalyticsData completed");
         }
       }
 
       // Update the updateAnalyticsDashboard function to handle the actual data structure
       function updateAnalyticsDashboard(data) {
         const analytics = data.results;
-        console.log("Updating dashboard with:", analytics); // Debug log
 
         // Get unique sessions and calculate total visitors
         const uniqueSessions = [...new Set(analytics.map((a) => a.session_id))];
@@ -1572,13 +1552,13 @@
 
         // Render the current page of visitor data
         renderVisitorData();
-        console.log("Called renderVisitorData from updateAnalyticsDashboard");
+
       }
 
       // Add this function to update all charts with analytics data
       function updateCharts(analytics) {
-        console.log("Updating charts with:", analytics); // Debug log
 
+        
         // Update region chart
         if (charts.region) {
           const regionData = analytics.reduce((acc, curr) => {
@@ -1642,7 +1622,6 @@
 
       // Update the renderVisitorData function to handle pagination
       function renderVisitorData() {
-        console.log("renderVisitorData called");
         const visitorTableBody = document.getElementById("visitor-data");
         if (!visitorTableBody) return;
 
@@ -1688,14 +1667,7 @@
             start + pageEvents.length - 1,
             window.totalVisitorCount || 0
           );
-          console.log("[Pagination Info]", {
-            start,
-            end,
-            visitorCurrentPage,
-            totalVisitorPages,
-            totalVisitorCount: window.totalVisitorCount,
-            pageEventsLength: pageEvents.length,
-          });
+          
           paginationInfo.innerHTML = `
             Showing <span class="font-medium text-white">${start}</span> to
             <span class="font-medium text-white">${end}</span> of
@@ -1710,10 +1682,6 @@
           document.getElementById("visitor-pagination");
         if (paginationContainer) {
           paginationContainer.innerHTML = "";
-          console.log("[Pagination Buttons]", {
-            visitorCurrentPage,
-            totalVisitorPages,
-          });
 
           // Previous button
           const prevButton = document.createElement("button");
@@ -1725,7 +1693,6 @@
           prevButton.textContent = "Previous";
           prevButton.disabled = visitorCurrentPage === 1;
           prevButton.onclick = () => {
-            console.log("Clicked Previous");
             if (visitorCurrentPage > 1) {
               fetchAnalyticsData(
                 visitorCurrentPage - 1,
@@ -1746,7 +1713,6 @@
             totalVisitorPages,
             startPage + maxVisiblePages - 1
           );
-          console.log("[Page Range]", { startPage, endPage });
 
           // Adjust start page if we're near the end
           if (endPage - startPage + 1 < maxVisiblePages) {
@@ -1760,7 +1726,6 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             firstPageButton.textContent = "1";
             firstPageButton.onclick = () => {
-              console.log("Clicked First Page");
               fetchAnalyticsData(1, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(firstPageButton);
@@ -1784,7 +1749,6 @@
             }`;
             pageButton.textContent = i;
             pageButton.onclick = () => {
-              console.log("Clicked page", i);
               fetchAnalyticsData(i, visitorItemsPerPage, currentTimeFrame);
             };
             paginationContainer.appendChild(pageButton);
@@ -1805,7 +1769,6 @@
               "px-3 py-1 rounded text-gray-400 hover:text-white hover:bg-gray-700";
             lastPageButton.textContent = totalVisitorPages;
             lastPageButton.onclick = () => {
-              console.log("Clicked Last Page");
               fetchAnalyticsData(
                 totalVisitorPages,
                 visitorItemsPerPage,
@@ -1825,7 +1788,6 @@
           nextButton.textContent = "Next";
           nextButton.disabled = visitorCurrentPage === totalVisitorPages;
           nextButton.onclick = () => {
-            console.log("Clicked Next");
             if (visitorCurrentPage < totalVisitorPages) {
               fetchAnalyticsData(
                 visitorCurrentPage + 1,
@@ -1839,11 +1801,7 @@
 
         // Log the pagination container and its contents for DOM inspection
         const pagCont = document.getElementById("visitor-pagination");
-        console.log(
-          "[Pagination Container]",
-          pagCont,
-          pagCont ? pagCont.innerHTML : "No container"
-        );
+
       }
 
       // Function to reload domains
@@ -1905,23 +1863,18 @@
 
       // Update the document ready event listener
       document.addEventListener("DOMContentLoaded", () => {
-        console.log("DOM Content Loaded"); // Debug log
 
         // Initialize charts with empty data
-        console.log("Initializing charts...");
         try {
           Object.keys(chartConfigs).forEach((key) => {
             try {
               const canvas = document.getElementById(`${key}-chart`);
               if (canvas) {
-                console.log(`Initializing chart: ${key}`);
                 // Destroy existing chart if it exists
                 if (charts[key]) {
-                  console.log(`Destroying existing chart: ${key}`);
                   charts[key].destroy();
                 }
                 charts[key] = new Chart(canvas, chartConfigs[key]);
-                console.log(`Successfully initialized chart: ${key}`);
               } else {
                 console.warn(`Canvas for chart ${key} not found - skipping`);
               }
@@ -1934,7 +1887,6 @@
         }
 
         // Fetch initial analytics data
-        console.log("Fetching initial analytics data...");
         try {
           fetchAnalyticsData(1, 10).catch((error) => {
             console.error("Error in initial analytics fetch:", error);
@@ -1947,10 +1899,8 @@
         }
 
         // Poll for updates every 30 seconds
-        console.log("Setting up polling interval...");
         try {
           const analyticsPollingInterval = setInterval(() => {
-            console.log("Polling for updates...");
             fetchAnalyticsData(1, 10).catch((error) => {
               console.error("Error in polling fetch:", error);
             });
@@ -1958,7 +1908,6 @@
 
           // Cleanup on page unload
           window.addEventListener("beforeunload", () => {
-            console.log("Cleaning up...");
             clearInterval(analyticsPollingInterval);
             // Destroy all charts before unloading
             Object.keys(charts).forEach((key) => {
@@ -1985,7 +1934,6 @@
       }
 
       // Immediate execution to verify script loading
-      console.log("Script loaded and ready");
     </script>
   </body>
 </html>
